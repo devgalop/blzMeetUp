@@ -32,17 +32,19 @@ public class LocationRepository : ILocationRepository
 
     public async Task<List<Location>> GetLocations()
     {
-        return await _dataContext.Locations.ToListAsync();
+        return await _dataContext.Locations
+                .Include(l => l.MeetUps)
+                .ToListAsync();
     }
 
     public async Task<List<Location>> GetLocationsByCity(int cityId)
     {
-        return await _dataContext.Locations.Where(c => c.CityId == cityId).ToListAsync();
+        return await _dataContext.Locations.Include(l => l.MeetUps).Where(c => c.CityId == cityId).ToListAsync();
     }
 
     public async Task<Location?> GetLocation(int id)
     {
-        return await _dataContext.Locations.Where(x => x.Id == id).FirstOrDefaultAsync();
+        return await _dataContext.Locations.Include(l => l.MeetUps).Where(x => x.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task InsertCity(City city)
@@ -53,22 +55,24 @@ public class LocationRepository : ILocationRepository
 
     public async Task<List<City>> GetCities()
     {
-        return await _dataContext.Cities.ToListAsync();
+        return await _dataContext.Cities
+                .Include(c => c.Locations)
+                .ToListAsync();
     }
 
     public async Task<City?> GetCity(int id)
     {
-        return await _dataContext.Cities.Where(c => c.Id == id).FirstOrDefaultAsync();
+        return await _dataContext.Cities.Include(c => c.Locations).Where(c => c.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task<City?> GetCity(string name)
     {
-        return await _dataContext.Cities.Where(c => c.Name == name).FirstOrDefaultAsync();
+        return await _dataContext.Cities.Include(c => c.Locations).Where(c => c.Name == name).FirstOrDefaultAsync();
     }
 
     public async Task<List<City>> GetCitiesByCountry(int countryId)
     {
-        return await _dataContext.Cities.Where(c => c.CountryId == countryId).ToListAsync();
+        return await _dataContext.Cities.Include(c => c.Locations).Where(c => c.CountryId == countryId).ToListAsync();
     }
 
     public async Task InsertCountry(Country country)
@@ -86,11 +90,11 @@ public class LocationRepository : ILocationRepository
 
     public async Task<Country?> GetCountry(int id)
     {
-        return await _dataContext.Countries.Where(c => c.Id == id).FirstOrDefaultAsync();
+        return await _dataContext.Countries.Include(c => c.Cities).Where(c => c.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task<Country?> GetCountry(string name)
     {
-        return await _dataContext.Countries.Where(c => c.Name == name).FirstOrDefaultAsync();
+        return await _dataContext.Countries.Include(c => c.Cities).Where(c => c.Name == name).FirstOrDefaultAsync();
     }
 }
