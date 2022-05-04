@@ -45,7 +45,8 @@ public class LocationManagerController : ControllerBase
         try
         {
             List<Country> countries = await _repository.GetCountries();
-            return Ok(countries);
+            List<BasicCountryModel> result = _mappingHelper.ConvertTo<List<BasicCountryModel>,List<Country>>(countries);
+            return Ok(result);
         }
         catch (Exception ex)
         {

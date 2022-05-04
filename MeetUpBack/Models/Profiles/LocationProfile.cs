@@ -17,10 +17,14 @@ public class LocationProfile : Profile
         CreateMap<City, AddCityModel>();
         CreateMap<UpdateCityModel, City>();
         CreateMap<City, UpdateCityModel>();
+        CreateMap<BasicCityModel, City>();
+        CreateMap<City, BasicCityModel>();
 
         CreateMap<AddCountryModel, Country>();
         CreateMap<Country, AddCountryModel>();
         CreateMap<UpdateCountryModel, Country>();
         CreateMap<Country, UpdateCountryModel>();
+        CreateMap<BasicCountryModel, Country>();
+        CreateMap<Country, BasicCountryModel>();
     }
 }
