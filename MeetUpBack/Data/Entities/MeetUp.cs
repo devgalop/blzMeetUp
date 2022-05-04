@@ -13,5 +13,5 @@ public class MeetUp
     public DateTime FinalDate { get; set; }
     public bool Status { get; set; } = true;
     public List<Event> Events { get; set; } = new List<Event>();
-    public Location? Location { get; set; }
+    public int LocationId { get; set; }
 }
