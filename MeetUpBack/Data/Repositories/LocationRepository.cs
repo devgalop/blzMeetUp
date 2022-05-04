@@ -61,6 +61,11 @@ public class LocationRepository : ILocationRepository
         return await _dataContext.Cities.Where(c => c.Id == id).FirstOrDefaultAsync();
     }
 
+    public async Task<City?> GetCity(string name)
+    {
+        return await _dataContext.Cities.Where(c => c.Name == name).FirstOrDefaultAsync();
+    }
+
     public async Task<List<City>> GetCitiesByCountry(int countryId)
     {
         return await _dataContext.Cities.Where(c => c.CountryId == countryId).ToListAsync();
@@ -74,11 +79,18 @@ public class LocationRepository : ILocationRepository
 
     public async Task<List<Country>> GetCountries()
     {
-        return await _dataContext.Countries.ToListAsync();
+        return await _dataContext.Countries
+                .Include(c => c.Cities)
+                .ToListAsync();
     }
 
     public async Task<Country?> GetCountry(int id)
     {
         return await _dataContext.Countries.Where(c => c.Id == id).FirstOrDefaultAsync();
+    }
+
+    public async Task<Country?> GetCountry(string name)
+    {
+        return await _dataContext.Countries.Where(c => c.Name == name).FirstOrDefaultAsync();
     }
 }
