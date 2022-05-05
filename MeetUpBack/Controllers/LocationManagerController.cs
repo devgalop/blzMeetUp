@@ -45,7 +45,7 @@ public class LocationManagerController : ControllerBase
         try
         {
             List<Country> countries = await _repository.GetCountries();
-            List<BasicCountryModel> result = _mappingHelper.ConvertTo<List<BasicCountryModel>,List<Country>>(countries);
+            List<BasicCountryModel> result = _mappingHelper.ConvertTo<List<BasicCountryModel>, List<Country>>(countries);
             return Ok(result);
         }
         catch (Exception ex)
@@ -77,13 +77,13 @@ public class LocationManagerController : ControllerBase
     {
         try
         {
-            if(model == null || string.IsNullOrEmpty(model.Name) || model.CountryId <= 0) throw new ArgumentNullException("Model is invalid");
+            if (model == null || string.IsNullOrEmpty(model.Name) || model.CountryId <= 0) throw new ArgumentNullException("Model is invalid");
             var countryFound = await _repository.GetCountry(model.CountryId);
-            if(countryFound == null) throw new Exception("Country has not been found");
-            City city = _mappingHelper.ConvertTo<City,AddCityModel>(model);
+            if (countryFound == null) throw new Exception("Country has not been found");
+            City city = _mappingHelper.ConvertTo<City, AddCityModel>(model);
             await _repository.InsertCity(city);
             var cityFound = await _repository.GetCity(model.Name);
-            if(cityFound == null) throw new Exception("City has not been added to repository");
+            if (cityFound == null) throw new Exception("City has not been added to repository");
             return Ok(cityFound);
         }
         catch (Exception ex)
@@ -125,4 +125,65 @@ public class LocationManagerController : ControllerBase
         }
     }
 
+    [HttpPost("AddLocation")]
+    public async Task<IActionResult> AddLocation([FromBody] AddLocationModel model)
+    {
+        try
+        {
+            if (model == null || model.CityId <= 0 || string.IsNullOrEmpty(model.Address) || model.Capacity <= 0) throw new ArgumentNullException("Model is invalid");
+            City? cityFound = await _repository.GetCity(model.CityId);
+            if (cityFound == null) throw new Exception("City has not been found");
+            Location location = _mappingHelper.ConvertTo<Location, AddLocationModel>(model);
+            await _repository.InsertLocation(location);
+            var locationFound = await _repository.GetLocation(model.Name);
+            if (locationFound == null) throw new Exception("Location has not been added to repository");
+            return Ok(locationFound);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpPut("UpdateLocation")]
+    public async Task<IActionResult> UpdateLocation([FromBody] UpdateLocationModel model)
+    {
+        try
+        {
+            if (model == null || model.Id <= 0 || model.CityId <= 0 || string.IsNullOrEmpty(model.Address) || model.Capacity <= 0) throw new ArgumentNullException("Model is invalid");
+            City? cityFound = await _repository.GetCity(model.CityId);
+            if (cityFound == null) throw new Exception("City has not been found");
+            Location? location = await _repository.GetLocation(model.Id);
+            if(location == null) throw new Exception("Location has not been found");
+            location.Address = model.Address;
+            location.Capacity = model.Capacity;
+            location.CityId = model.CityId;
+            await _repository.UpdateLocation(location);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpDelete("DeleteLocation/{id}")]
+    public async Task<IActionResult> DeleteLocation(int id)
+    {
+        try
+        {
+            if (id <= 0) throw new ArgumentOutOfRangeException("Id is invalid");
+            Location? locationFound = await _repository.GetLocation(id);
+            if(locationFound == null) throw new Exception("Location has not been found");
+            await _repository.DeleteLocation(locationFound);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
 }

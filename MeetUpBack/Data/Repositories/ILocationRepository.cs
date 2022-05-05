@@ -19,4 +19,5 @@ public interface ILocationRepository
     Task<List<Location>> GetLocations();
     Task<List<Location>> GetLocationsByCity(int cityId);
     Task<Location?> GetLocation(int id);
+    Task<Location?> GetLocation(string name);
 }

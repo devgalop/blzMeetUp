@@ -47,6 +47,11 @@ public class LocationRepository : ILocationRepository
         return await _dataContext.Locations.Include(l => l.MeetUps).Where(x => x.Id == id).FirstOrDefaultAsync();
     }
 
+    public async Task<Location?> GetLocation(string name)
+    {
+        return await _dataContext.Locations.Include(l => l.MeetUps).Where(x => x.Name == name).FirstOrDefaultAsync();
+    }
+
     public async Task InsertCity(City city)
     {
         await _dataContext.Cities.AddAsync(city);
