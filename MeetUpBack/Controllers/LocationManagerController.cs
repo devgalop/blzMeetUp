@@ -187,4 +187,36 @@ public class LocationManagerController : ControllerBase
             return BadRequest(ex);
         }
     }
+
+    [HttpGet("GetLocations")]
+    public async Task<IActionResult> GetLocations()
+    {
+        try
+        {
+            List<Location> locations = await _repository.GetLocations();
+            return Ok(locations);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpGet("GetLocation/{id}")]
+    public async Task<IActionResult> GetLocation(int id)
+    {
+        try
+        {
+            if(id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
+            Location? location = await _repository.GetLocation(id);
+            if(location == null) throw new Exception("Location has not been found");
+            return Ok(location);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
 }
