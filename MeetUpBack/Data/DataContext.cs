@@ -9,9 +9,9 @@ public class DataContext : DbContext
     {
     }
 
-    public DbSet<City> Cities { get; set; }
-    public DbSet<Country> Countries { get; set; }
-    public DbSet<Location> Locations { get; set; }
-    public DbSet<MeetUp> MeetUps { get; set; }
-    public DbSet<Event> Events { get; set; }
+    public DbSet<City> Cities { get; set; } = null!;
+    public DbSet<Country> Countries { get; set; } = null!;
+    public DbSet<Location> Locations { get; set; } = null!;
+    public DbSet<MeetUp> MeetUps { get; set; } = null!;
+    public DbSet<Event> Events { get; set; } = null!;
 }

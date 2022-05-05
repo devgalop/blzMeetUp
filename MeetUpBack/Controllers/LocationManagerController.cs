@@ -156,11 +156,12 @@ public class LocationManagerController : ControllerBase
             if (cityFound == null) throw new Exception("City has not been found");
             Location? location = await _repository.GetLocation(model.Id);
             if(location == null) throw new Exception("Location has not been found");
+            location.Name = model.Name;
             location.Address = model.Address;
             location.Capacity = model.Capacity;
             location.CityId = model.CityId;
             await _repository.UpdateLocation(location);
-            return Ok();
+            return Ok(location);
         }
         catch (Exception ex)
         {
