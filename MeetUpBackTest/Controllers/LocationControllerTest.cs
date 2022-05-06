@@ -512,7 +512,7 @@ public class LocationControllerTest
     }
 
     [Fact]
-    public async Task AddLocation_WithValidModel_ReturnsBadRequest()
+    public async Task AddLocation_WithValidModel_ReturnsOk()
     {
         // Arrange
         AddLocationModel model = new AddLocationModel()
@@ -722,7 +722,7 @@ public class LocationControllerTest
     }
 
     [Fact]
-    public async Task UpdateLocation_WithValidModel_ReturnsBadRequest()
+    public async Task UpdateLocation_WithValidModel_ReturnsOk()
     {
         // Arrange
         UpdateLocationModel model = new UpdateLocationModel()
@@ -747,6 +747,57 @@ public class LocationControllerTest
 
         // Assert
         Assert.IsType<OkObjectResult>(result);
+    }
+
+[Fact]
+    public async Task DeleteLocation_WithInvalidId_ReturnsBadRequest()
+    {
+        // Arrange
+        int id = 0;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<int>())).ReturnsAsync(new Location());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.DeleteLocation(id);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);                
+    }
+
+    [Fact]
+    public async Task DeleteLocation_WithUnnexistLocation_ReturnsBadRequest()
+    {
+        // Arrange
+        int id = 1;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<int>())).ReturnsAsync((Location?)null);
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.DeleteLocation(id);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);                
+    }
+
+    [Fact]
+    public async Task DeleteLocation_WithValidId_ReturnsOk()
+    {
+        // Arrange
+        int id = 1;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<int>())).ReturnsAsync(new Location());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.DeleteLocation(id);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);  
     }
 
     [Fact]
@@ -784,7 +835,7 @@ public class LocationControllerTest
     }
 
     [Fact]
-    public async Task GetLocation_WithValidId_ReturnsBadRequest()
+    public async Task GetLocation_WithValidId_ReturnsOk()
     {
         // Arrange
         int id = 1;
