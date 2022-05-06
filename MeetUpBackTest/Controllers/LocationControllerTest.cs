@@ -106,9 +106,6 @@ public class LocationControllerTest
         var repositoryStub = new Mock<ILocationRepository>();
         repositoryStub.Setup(repo => repo.GetCountry(It.IsAny<int>())).ReturnsAsync(new Country());
         var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Country,AddCountryModel>(It.IsAny<AddCountryModel>()))
-            .Returns(new Country());
         var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
 
         //Act
@@ -119,23 +116,20 @@ public class LocationControllerTest
     }
 
     [Fact]
-    public async Task GetCountry_WithProblemsToAdd_ReturnsBadRequest()
+    public async Task GetCountry_WithUnnexistCountry_ReturnsNotFound()
     {
         //Arrange
         int id = 1;
         var repositoryStub = new Mock<ILocationRepository>();
         repositoryStub.Setup(repo => repo.GetCountry(It.IsAny<int>())).ReturnsAsync((Country?)null);
         var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Country,AddCountryModel>(It.IsAny<AddCountryModel>()))
-            .Returns(new Country());
         var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
 
         //Act
         var result = await controller.GetCountry(id);
 
         //Assert
-        Assert.IsType<BadRequestObjectResult>(result);
+        Assert.IsType<NotFoundObjectResult>(result);
     }
 
     [Fact]
@@ -146,9 +140,6 @@ public class LocationControllerTest
         var repositoryStub = new Mock<ILocationRepository>();
         repositoryStub.Setup(repo => repo.GetCountry(It.IsAny<int>())).ReturnsAsync(new Country());
         var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Country,AddCountryModel>(It.IsAny<AddCountryModel>()))
-            .Returns(new Country());
         var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
 
         //Act
@@ -308,9 +299,6 @@ public class LocationControllerTest
         var repositoryStub = new Mock<ILocationRepository>();
         repositoryStub.Setup(repo => repo.GetCity(It.IsAny<string>())).ReturnsAsync(new City());
         var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<City,AddCityModel>(It.IsAny<AddCityModel>()))
-            .Returns(new City());
         var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
 
         // Act
@@ -321,23 +309,20 @@ public class LocationControllerTest
     }
 
     [Fact]
-    public async Task GetCity_WithUnnexistCity_ReturnsBadRequest()
+    public async Task GetCity_WithUnnexistCity_ReturnsNotFound()
     {
         // Arrange
         int id = 1;
         var repositoryStub = new Mock<ILocationRepository>();
         repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync((City?)null);
         var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<City,AddCityModel>(It.IsAny<AddCityModel>()))
-            .Returns(new City());
         var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
 
         // Act
         var result = await controller.GetCity(id);
 
         // Assert
-        Assert.IsType<BadRequestObjectResult>(result);
+        Assert.IsType<NotFoundObjectResult>(result);
     }
 
     [Fact]
@@ -348,9 +333,6 @@ public class LocationControllerTest
         var repositoryStub = new Mock<ILocationRepository>();
         repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
         var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<City,AddCityModel>(It.IsAny<AddCityModel>()))
-            .Returns(new City());
         var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
 
         // Act
@@ -790,6 +772,7 @@ public class LocationControllerTest
         int id = 1;
         var repositoryStub = new Mock<ILocationRepository>();
         repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<int>())).ReturnsAsync(new Location());
+        repositoryStub.Setup(repo => repo.DeleteLocation(It.IsAny<Location>()));
         var mappingHelperStub = new Mock<IMappingHelper>();
         var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
 
@@ -818,7 +801,7 @@ public class LocationControllerTest
     }
 
     [Fact]
-    public async Task GetLocation_WithUnnexistLocation_ReturnsBadRequest()
+    public async Task GetLocation_WithUnnexistLocation_ReturnsNotFound()
     {
         // Arrange
         int id = 1;
@@ -831,7 +814,7 @@ public class LocationControllerTest
         var result = await controller.GetLocation(id);
 
         // Assert
-        Assert.IsType<BadRequestObjectResult>(result);                
+        Assert.IsType<NotFoundObjectResult>(result);                
     }
 
     [Fact]

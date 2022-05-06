@@ -179,7 +179,7 @@ public class LocationManagerController : ControllerBase
             Location? locationFound = await _repository.GetLocation(id);
             if(locationFound == null) throw new Exception("Location has not been found");
             await _repository.DeleteLocation(locationFound);
-            return Ok();
+            return Ok("Location has been deleted");
         }
         catch (Exception ex)
         {
