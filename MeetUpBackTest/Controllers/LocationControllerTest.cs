@@ -299,4 +299,504 @@ public class LocationControllerTest
         // Assert
         Assert.IsType<OkObjectResult>(result);
     }
+
+    [Fact]
+    public async Task GetCity_WithInvalidId_ReturnsBadRequest()
+    {
+        // Arrange
+        int id = 0;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<string>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<City,AddCityModel>(It.IsAny<AddCityModel>()))
+            .Returns(new City());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.GetCity(id);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task GetCity_WithUnnexistCity_ReturnsBadRequest()
+    {
+        // Arrange
+        int id = 1;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync((City?)null);
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<City,AddCityModel>(It.IsAny<AddCityModel>()))
+            .Returns(new City());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.GetCity(id);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task GetCity_WithValidId_ReturnsOk()
+    {
+        // Arrange
+        int id = 1;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<City,AddCityModel>(It.IsAny<AddCityModel>()))
+            .Returns(new City());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.GetCity(id);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task AddLocation_WithModelNull_ReturnsBadRequest()
+    {
+        // Arrange
+        AddLocationModel model = null!;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,AddLocationModel>(It.IsAny<AddLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.AddLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task AddLocation_WithInvalidCityId_ReturnsBadRequest()
+    {
+        // Arrange
+        AddLocationModel model = new AddLocationModel()
+        {
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 100,
+            CityId = 0
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,AddLocationModel>(It.IsAny<AddLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.AddLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task AddLocation_WithInvalidAddress_ReturnsBadRequest()
+    {
+        // Arrange
+        AddLocationModel model = new AddLocationModel()
+        {
+            Name = "LocationTest",
+            Address = string.Empty,
+            Capacity = 100,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,AddLocationModel>(It.IsAny<AddLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.AddLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task AddLocation_WithInvalidCapacity_ReturnsBadRequest()
+    {
+        // Arrange
+        AddLocationModel model = new AddLocationModel()
+        {
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 0,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,AddLocationModel>(It.IsAny<AddLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.AddLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task AddLocation_WithUnnexistCity_ReturnsBadRequest()
+    {
+        // Arrange
+        AddLocationModel model = new AddLocationModel()
+        {
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 100,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync((City?)null);
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,AddLocationModel>(It.IsAny<AddLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.AddLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task AddLocation_WithProblemsToAdd_ReturnsBadRequest()
+    {
+        // Arrange
+        AddLocationModel model = new AddLocationModel()
+        {
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 100,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<string>())).ReturnsAsync((Location?) null);
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,AddLocationModel>(It.IsAny<AddLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.AddLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task AddLocation_WithValidModel_ReturnsBadRequest()
+    {
+        // Arrange
+        AddLocationModel model = new AddLocationModel()
+        {
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 100,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<string>())).ReturnsAsync(new Location());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,AddLocationModel>(It.IsAny<AddLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.AddLocation(model);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task UpdateLocation_WithModelNull_ReturnsBadRequest()
+    {
+        // Arrange
+        UpdateLocationModel model = null!;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,UpdateLocationModel>(It.IsAny<UpdateLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.UpdateLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task UpdateLocation_WithInvalidCityId_ReturnsBadRequest()
+    {
+        // Arrange
+        UpdateLocationModel model = new UpdateLocationModel()
+        {
+            Id = 1,
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 100,
+            CityId = 0
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,UpdateLocationModel>(It.IsAny<UpdateLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.UpdateLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task UpdateLocation_WithInvalidAddress_ReturnsBadRequest()
+    {
+        // Arrange
+        UpdateLocationModel model = new UpdateLocationModel()
+        {
+            Id = 1,
+            Name = "LocationTest",
+            Address = string.Empty,
+            Capacity = 100,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,UpdateLocationModel>(It.IsAny<UpdateLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.UpdateLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task UpdateLocation_WithInvalidCapacity_ReturnsBadRequest()
+    {
+        // Arrange
+        UpdateLocationModel model = new UpdateLocationModel()
+        {
+            Id = 1,
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 0,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,UpdateLocationModel>(It.IsAny<UpdateLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.UpdateLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task UpdateLocation_WithInvalidId_ReturnsBadRequest()
+    {
+        // Arrange
+        UpdateLocationModel model = new UpdateLocationModel()
+        {
+            Id = 0,
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 100,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,UpdateLocationModel>(It.IsAny<UpdateLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.UpdateLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task UpdateLocation_WithUnnexistCity_ReturnsBadRequest()
+    {
+        // Arrange
+        UpdateLocationModel model = new UpdateLocationModel()
+        {
+            Id = 1,
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 100,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync((City?)null);
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,UpdateLocationModel>(It.IsAny<UpdateLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.UpdateLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task UpdateLocation_WithUnnexistLocation_ReturnsBadRequest()
+    {
+        // Arrange
+        UpdateLocationModel model = new UpdateLocationModel()
+        {
+            Id = 1,
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 100,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<int>())).ReturnsAsync((Location?) null);
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,UpdateLocationModel>(It.IsAny<UpdateLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.UpdateLocation(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task UpdateLocation_WithValidModel_ReturnsBadRequest()
+    {
+        // Arrange
+        UpdateLocationModel model = new UpdateLocationModel()
+        {
+            Id = 1,
+            Name = "LocationTest",
+            Address = "AddressTest",
+            Capacity = 100,
+            CityId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<int>())).ReturnsAsync(new City());
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<int>())).ReturnsAsync(new Location());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<Location,UpdateLocationModel>(It.IsAny<UpdateLocationModel>()))
+            .Returns(new Location());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.UpdateLocation(model);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task GetLocation_WithInvalidId_ReturnsBadRequest()
+    {
+        // Arrange
+        int id = 0;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<int>())).ReturnsAsync(new Location());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.GetLocation(id);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);                
+    }
+
+    [Fact]
+    public async Task GetLocation_WithUnnexistLocation_ReturnsBadRequest()
+    {
+        // Arrange
+        int id = 1;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<int>())).ReturnsAsync((Location?)null);
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.GetLocation(id);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);                
+    }
+
+    [Fact]
+    public async Task GetLocation_WithValidId_ReturnsBadRequest()
+    {
+        // Arrange
+        int id = 1;
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetLocation(It.IsAny<int>())).ReturnsAsync(new Location());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+
+        // Act
+        var result = await controller.GetLocation(id);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);                
+    }
 }
