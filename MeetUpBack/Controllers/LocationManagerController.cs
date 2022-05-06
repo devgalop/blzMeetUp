@@ -62,7 +62,7 @@ public class LocationManagerController : ControllerBase
         {
             if (id <= 0) throw new ArgumentOutOfRangeException("Id is invalid");
             var countryFound = await _repository.GetCountry(id);
-            if (countryFound == null) throw new Exception("Country has not been found");
+            if (countryFound == null) return NotFound("Country has not been found");
             return Ok(countryFound);
         }
         catch (Exception ex)
@@ -115,7 +115,7 @@ public class LocationManagerController : ControllerBase
         {
             if (id <= 0) throw new ArgumentOutOfRangeException("Id is invalid");
             var cityFound = await _repository.GetCity(id);
-            if (cityFound == null) throw new Exception("City has not been found");
+            if (cityFound == null) return NotFound("City has not been found");
             return Ok(cityFound);
         }
         catch (Exception ex)
@@ -210,7 +210,7 @@ public class LocationManagerController : ControllerBase
         {
             if(id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
             Location? location = await _repository.GetLocation(id);
-            if(location == null) throw new Exception("Location has not been found");
+            if(location == null) return NotFound("Location has not been found");
             return Ok(location);
         }
         catch (Exception ex)
