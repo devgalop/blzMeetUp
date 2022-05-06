@@ -249,4 +249,54 @@ public class LocationControllerTest
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);
     }
+
+    [Fact]
+    public async Task RegisterCity_WithProblemsToAdd_ReturnsBadRequest()
+    {
+        // Arrange
+        AddCityModel model = new AddCityModel()
+        {
+            Name = "CiudadPrueba",
+            CountryId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCountry(It.IsAny<int>())).ReturnsAsync(new Country());
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<string>())).ReturnsAsync((City?)null);
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<City,AddCityModel>(It.IsAny<AddCityModel>()))
+            .Returns(new City());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+        
+        // Act
+        var result = await controller.RegisterCity(model);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task RegisterCity_WithValidModel_ReturnsOk()
+    {
+        // Arrange
+        AddCityModel model = new AddCityModel()
+        {
+            Name = "CiudadPrueba",
+            CountryId = 1
+        };
+        var repositoryStub = new Mock<ILocationRepository>();
+        repositoryStub.Setup(repo => repo.GetCountry(It.IsAny<int>())).ReturnsAsync(new Country());
+        repositoryStub.Setup(repo => repo.GetCity(It.IsAny<string>())).ReturnsAsync(new City());
+        var mappingHelperStub = new Mock<IMappingHelper>();
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<City,AddCityModel>(It.IsAny<AddCityModel>()))
+            .Returns(new City());
+        var controller = new LocationManagerController(repositoryStub.Object, mappingHelperStub.Object);
+        
+        // Act
+        var result = await controller.RegisterCity(model);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+    }
 }
