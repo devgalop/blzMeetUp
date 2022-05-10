@@ -10,6 +10,7 @@ public interface IMeetUpRepository
     Task DeleteMeetUp(MeetUp meetUp);
     Task<List<MeetUp>> GetMeetUpsByLocation(int locationId);
     Task<MeetUp?> GetMeetUp(int id);
+    Task<MeetUp?> GetMeetUp(string name);
     Task<List<MeetUp>> GetMeetUpsByDate(DateTime date);
     Task CreateEvent(Event meetUpEvent);
     Task UpdateEvent(Event meetUpEvent);

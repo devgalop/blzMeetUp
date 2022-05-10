@@ -27,6 +27,11 @@ public class MeetUpRepository : IMeetUpRepository
         return await _dataContext.MeetUps.Where(m => m.Id == id).FirstOrDefaultAsync();
     }
 
+    public async Task<MeetUp?> GetMeetUp(string name)
+    {
+        return await _dataContext.MeetUps.Where(m => m.Name == name).FirstOrDefaultAsync();
+    }
+
     public async Task<List<MeetUp>> GetMeetUpsByDate(DateTime date)
     {
         return await _dataContext.MeetUps.Where(m => m.InitialDate == date).ToListAsync();
