@@ -1,16 +1,12 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MeetUpBack.Data.Entities;
+namespace MeetUpBack.Models.Dto;
 
-public class Event
+public class AddEventModel
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+    [RegularExpression(@"^([01][0-9]|2[0-3]):([0-5][0-9])$")]
     public string StartHour { get; set; } = string.Empty;
     public string Details { get; set; } = string.Empty;
-    public bool Status { get; set; } = true;
     public int MeetUpId { get; set; }
 }
