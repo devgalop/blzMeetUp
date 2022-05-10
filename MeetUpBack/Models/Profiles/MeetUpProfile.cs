@@ -13,5 +13,11 @@ public class MeetUpProfile : Profile
 
         CreateMap<UpdateMeetUpModel, MeetUp>();
         CreateMap<MeetUp, UpdateMeetUpModel>();
+
+        CreateMap<AddEventModel, Event>();
+        CreateMap<Event, AddEventModel>();
+
+        CreateMap<UpdateEventModel, Event>();
+        CreateMap<Event, UpdateEventModel>();
     }
 }

@@ -73,4 +73,19 @@ public class MeetUpRepository : IMeetUpRepository
         await UpdateEvent(meetUpEvent);
     }
 
+    public async Task<Event?> GetEvent(int id)
+    {
+        return await _dataContext.Events.Where(x => x.Id == id).FirstOrDefaultAsync();
+    }
+
+    public async Task<Event?> GetEvent(string name)
+    {
+        return await _dataContext.Events.Where(x => x.Name == name).FirstOrDefaultAsync();
+    }
+
+    public async Task<List<Event>> GetEventsByMeetUp(int meetUpId)
+    {
+        return await _dataContext.Events.Where(x => x.MeetUpId == meetUpId).ToListAsync();
+    }
+
 }

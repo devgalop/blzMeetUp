@@ -15,4 +15,7 @@ public interface IMeetUpRepository
     Task CreateEvent(Event meetUpEvent);
     Task UpdateEvent(Event meetUpEvent);
     Task DeleteEvent(Event meetUpEvent);
+    Task<Event?> GetEvent(int id);
+    Task<Event?> GetEvent(string name);
+    Task<List<Event>> GetEventsByMeetUp(int meetUpId);
 }
