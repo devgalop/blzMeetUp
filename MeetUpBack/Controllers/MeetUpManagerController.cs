@@ -31,6 +31,8 @@ public class MeetUpManagerController : ControllerBase
             if(model == null || string.IsNullOrEmpty(model.Name) || model.LocationId <= 0) throw new ArgumentNullException("Model is invalid");
             if(model.FinalDate < DateTime.Now || model.FinalDate < model.InitialDate) throw new Exception("Final date is not valid");
             if(model.InitialDate < DateTime.Now) throw new Exception("Initial date is not valid");
+            Location? locationFound = await _locationRepo.GetLocation(model.LocationId);
+            if(locationFound == null)throw new Exception("Location does not exist");
             MeetUp meetUp = _mappingHelper.ConvertTo<MeetUp,AddMeetUpModel>(model);
             await _repository.CreateMeetUp(meetUp);
             var meetUpFound = await _repository.GetMeetUp(meetUp.Name);
@@ -52,6 +54,8 @@ public class MeetUpManagerController : ControllerBase
             if(model == null || model.Id <= 0 || string.IsNullOrEmpty(model.Name) || model.LocationId <= 0) throw new ArgumentNullException("Model is invalid");
             if(model.FinalDate < DateTime.Now || model.FinalDate < model.InitialDate) throw new Exception("Final date is not valid");
             if(model.InitialDate < DateTime.Now) throw new Exception("Initial date is not valid");
+            Location? locationFound = await _locationRepo.GetLocation(model.LocationId);
+            if(locationFound == null)throw new Exception("Location does not exist");
             MeetUp? meetUpFound = await _repository.GetMeetUp(model.Id);
             if(meetUpFound == null) return NotFound("Meet Up has not been found");
             meetUpFound.Name = model.Name;
