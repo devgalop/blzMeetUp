@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using MeetUpBack.Data.Entities;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
@@ -128,7 +129,8 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(!ModelState.IsValid || string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.StartHour) || model.MeetUpId <= 0) throw new Exception("Model is invalid");
+            if(model == null || string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.StartHour) || model.MeetUpId <= 0) throw new Exception("Model is invalid");
+            if(!Regex.Match(model.StartHour, @"^([01][0-9]|2[0-3]):([0-5][0-9])$").Success) throw new Exception("Invalid hour format. Valid format {HH:MM}");
             MeetUp? meetUpFound = await _repository.GetMeetUp(model.MeetUpId);
             if(meetUpFound == null) throw new Exception("Meet up does not exist");
             Event meetUpEvent = _mappingHelper.ConvertTo<Event, AddEventModel>(model);
@@ -149,7 +151,8 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(!ModelState.IsValid || model.Id <= 0 ||string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.StartHour) || model.MeetUpId <= 0) throw new Exception("Model is invalid");
+            if(model.Id <= 0 ||string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.StartHour) || model.MeetUpId <= 0) throw new Exception("Model is invalid");
+            if(!Regex.Match(model.StartHour, @"^([01][0-9]|2[0-3]):([0-5][0-9])$").Success) throw new Exception("Invalid hour format. Valid format {HH:MM}");
             Event? eventFound = await _repository.GetEvent(model.Id);
             if(eventFound == null) return NotFound("Event has not been found");
             MeetUp? meetUpFound = await _repository.GetMeetUp(model.MeetUpId);
