@@ -14,4 +14,7 @@ public class DataContext : DbContext
     public DbSet<Location> Locations { get; set; } = null!;
     public DbSet<MeetUp> MeetUps { get; set; } = null!;
     public DbSet<Event> Events { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
+    public DbSet<Session> Sessions { get; set; } = null!;
 }
