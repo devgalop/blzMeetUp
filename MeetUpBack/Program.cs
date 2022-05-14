@@ -30,6 +30,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 builder.Services.AddScoped<ILocationRepository, LocationRepository>()
                 .AddScoped<IMeetUpRepository, MeetUpRepository>()
+                .AddScoped<IAuthRepository, AuthRepository>()
                 .AddScoped<IMappingHelper, MappingHelper>()
                 .AddScoped<ITokenFactoryHelper,TokenFactoryHelper>()
                 .AddScoped<IPasswordManagerHelper,PasswordManagerHelper>();
