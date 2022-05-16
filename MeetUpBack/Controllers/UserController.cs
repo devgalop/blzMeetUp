@@ -13,14 +13,17 @@ public class UserController : ControllerBase
     private readonly IAuthRepository _repository;
     private readonly IMappingHelper _mappingHelper;
     private readonly IPasswordManagerHelper _passwordManager;
+    private readonly ITokenFactoryHelper _tokenFactory;
 
     public UserController(IAuthRepository repository,
                             IMappingHelper mappingHelper,
-                            IPasswordManagerHelper passwordManager)
+                            IPasswordManagerHelper passwordManager,
+                            ITokenFactoryHelper tokenFactory)
     {
         _repository = repository;
         _mappingHelper = mappingHelper;
         _passwordManager = passwordManager;
+        _tokenFactory = tokenFactory;
     }
 
     [HttpPost("CreateUser")]
@@ -102,4 +105,60 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpPut("ModifyPassword")]
+    public async Task<IActionResult> ModifyPassword(UpdatePasswordModel model)
+    {
+        try
+        {
+            if(model == null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password)) throw new Exception("Model is not valid");
+            User? userFound = await _repository.GetUser(model.Email);
+            if(userFound == null) return NotFound("User has not been found");
+            string passwordHash = _passwordManager.GenerateHashCode(model.Password);
+            userFound.PasswordHash = passwordHash;
+            await _repository.UpdateUser(userFound);
+            return Ok("Password has been modified successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login(LoginModel model)
+    {
+        try
+        {
+            if(model == null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password)) throw new Exception("Model is not valid");
+            User? userFound = await _repository.GetUser(model.Email);
+            if(userFound == null) return NotFound("User has not been found");
+            bool isValidPassword = _passwordManager.IsValidHashCode(model.Password,userFound.PasswordHash);
+            if(!isValidPassword) return BadRequest("Invalid email or password");
+            TokenModel tokenModel = _tokenFactory.GenerateToken(userFound);
+            Session? sessionFound = await _repository.GetSession(userFound.Id);
+            if(sessionFound != null)
+            {
+                sessionFound.Token = tokenModel.Token;
+                sessionFound.Created = DateTime.Now;
+                sessionFound.Expires = tokenModel.ExpiresIn;
+                await _repository.UpdateSession(sessionFound);
+            }else
+            {
+                Session newSession = new Session()
+                {
+                    Token = tokenModel.Token,
+                    Created = DateTime.Now,
+                    Expires = tokenModel.ExpiresIn
+                };
+                await _repository.InsertSession(newSession);
+            }
+            return Ok(tokenModel);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
 }

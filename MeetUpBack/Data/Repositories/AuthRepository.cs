@@ -67,4 +67,27 @@ public class AuthRepository : IAuthRepository
     {
         return await _dataContext.Roles.Where(r => r.Name == name).FirstOrDefaultAsync();
     }
+
+    public async Task InsertSession(Session session)
+    {
+        _dataContext.Sessions.Add(session);
+        await _dataContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateSession(Session session)
+    {
+        _dataContext.Sessions.Update(session);
+        await _dataContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteSession(Session session)
+    {
+        _dataContext.Sessions.Remove(session);
+        await _dataContext.SaveChangesAsync();
+    }
+
+    public async Task<Session?> GetSession(int userId)
+    {
+        return await _dataContext.Sessions.Where(s => s.UserId == userId).FirstOrDefaultAsync();
+    }
 }
