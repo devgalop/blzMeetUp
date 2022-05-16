@@ -23,6 +23,7 @@ public class UserController : ControllerBase
         _passwordManager = passwordManager;
     }
 
+    [HttpPost("CreateUser")]
     public async Task<IActionResult> CreateUser(AddUserModel model)
     {
         try
@@ -44,5 +45,61 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpPut("UpdateUser")]
+    public async Task<IActionResult> UpdateUser(UpdateUserModel model)
+    {
+        try
+        {
+            if (model == null || model.Id <= 0 || string.IsNullOrEmpty(model.Name) || model.RoleId <= 0) throw new Exception("Model is invalid.");
+            Role? roleFound = await _repository.GetRole(model.RoleId);
+            if (roleFound == null) throw new Exception("Role has not been found.");
+            User? userFound = await _repository.GetUser(model.Id);
+            if (userFound == null) return NotFound("User has not been found.");
+            userFound.Name = model.Name;
+            userFound.LastName = model.LastName;
+            userFound.Status = model.Status;
+            userFound.RoleId = model.RoleId;
+            await _repository.UpdateUser(userFound);
+            return Ok(userFound);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpDelete("DeleteUser/{id}")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        try
+        {
+            if (id <= 0) throw new Exception("Model is invalid.");
+            User? userFound = await _repository.GetUser(id);
+            if (userFound == null) return NotFound("User has not been found.");
+            await _repository.DeleteUser(userFound);
+            return Ok("User has been deleted");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpGet("GetUser/{id}")]
+    public async Task<IActionResult> GetUser(int id)
+    {
+        try
+        {
+            if (id <= 0) throw new Exception("Model is invalid.");
+            return Ok(await _repository.GetUser(id));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
 
 }
