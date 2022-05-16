@@ -11,24 +11,27 @@ namespace MeetUpBackTest.Controllers;
 
 public class UserControllerTest
 {
+    private Mock<IAuthRepository> _repositoryStub;
+    private Mock<IMappingHelper> _mappingHelperStub;
+    private Mock<ITokenFactoryHelper> _tokenFactoryStub;
+    private Mock<IPasswordManagerHelper> _passwordHelperStub;
+    private UserController _controller;
+
+    public UserControllerTest()
+    {
+        _repositoryStub = new Mock<IAuthRepository>();
+        _mappingHelperStub = new Mock<IMappingHelper>();
+        _tokenFactoryStub = new Mock<ITokenFactoryHelper>();
+        _passwordHelperStub = new Mock<IPasswordManagerHelper>();
+        _controller = new UserController(_repositoryStub.Object, _mappingHelperStub.Object, _passwordHelperStub.Object,_tokenFactoryStub.Object);
+    }
+
     [Fact]
     public async Task CreateUser_WithModelNull_ReturnsBadRequest()
     {
         AddUserModel model = null!;
-        var repositoryStub = new Mock<IAuthRepository>();
-        repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
-                        .ReturnsAsync(new Role());
-        repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
-                        .ReturnsAsync(new User());
-        repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<User, AddUserModel>(It.IsAny<AddUserModel>()))
-            .Returns(new User());
-        var passwordHelperStub = new Mock<IPasswordManagerHelper>();
-        var controller = new UserController(repositoryStub.Object, mappingHelperStub.Object, passwordHelperStub.Object);
 
-        var result = await controller.CreateUser(model);
+        var result = await _controller.CreateUser(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
@@ -44,20 +47,8 @@ public class UserControllerTest
             Password = "123456",
             RoleId = 1
         };
-        var repositoryStub = new Mock<IAuthRepository>();
-        repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
-                        .ReturnsAsync(new Role());
-        repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
-                        .ReturnsAsync(new User());
-        repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<User, AddUserModel>(It.IsAny<AddUserModel>()))
-            .Returns(new User());
-        var passwordHelperStub = new Mock<IPasswordManagerHelper>();
-        var controller = new UserController(repositoryStub.Object, mappingHelperStub.Object, passwordHelperStub.Object);
 
-        var result = await controller.CreateUser(model);
+        var result = await _controller.CreateUser(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
@@ -73,20 +64,8 @@ public class UserControllerTest
             Password = string.Empty,
             RoleId = 1
         };
-        var repositoryStub = new Mock<IAuthRepository>();
-        repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
-                        .ReturnsAsync(new Role());
-        repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
-                        .ReturnsAsync(new User());
-        repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<User, AddUserModel>(It.IsAny<AddUserModel>()))
-            .Returns(new User());
-        var passwordHelperStub = new Mock<IPasswordManagerHelper>();
-        var controller = new UserController(repositoryStub.Object, mappingHelperStub.Object, passwordHelperStub.Object);
 
-        var result = await controller.CreateUser(model);
+        var result = await _controller.CreateUser(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
@@ -102,20 +81,7 @@ public class UserControllerTest
             Password = "123456",
             RoleId = 1
         };
-        var repositoryStub = new Mock<IAuthRepository>();
-        repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
-                        .ReturnsAsync(new Role());
-        repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
-                        .ReturnsAsync(new User());
-        repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<User, AddUserModel>(It.IsAny<AddUserModel>()))
-            .Returns(new User());
-        var passwordHelperStub = new Mock<IPasswordManagerHelper>();
-        var controller = new UserController(repositoryStub.Object, mappingHelperStub.Object, passwordHelperStub.Object);
-
-        var result = await controller.CreateUser(model);
+        var result = await _controller.CreateUser(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
@@ -131,20 +97,8 @@ public class UserControllerTest
             Password = "123456",
             RoleId = 0
         };
-        var repositoryStub = new Mock<IAuthRepository>();
-        repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
-                        .ReturnsAsync((Role?)null);
-        repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
-                        .ReturnsAsync(new User());
-        repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<User, AddUserModel>(It.IsAny<AddUserModel>()))
-            .Returns(new User());
-        var passwordHelperStub = new Mock<IPasswordManagerHelper>();
-        var controller = new UserController(repositoryStub.Object, mappingHelperStub.Object, passwordHelperStub.Object);
 
-        var result = await controller.CreateUser(model);
+        var result = await _controller.CreateUser(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
@@ -160,20 +114,11 @@ public class UserControllerTest
             Password = "123456",
             RoleId = 1
         };
-        var repositoryStub = new Mock<IAuthRepository>();
-        repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
-                        .ReturnsAsync((Role?)null);
-        repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
-                        .ReturnsAsync(new User());
-        repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<User, AddUserModel>(It.IsAny<AddUserModel>()))
-            .Returns(new User());
-        var passwordHelperStub = new Mock<IPasswordManagerHelper>();
-        var controller = new UserController(repositoryStub.Object, mappingHelperStub.Object, passwordHelperStub.Object);
 
-        var result = await controller.CreateUser(model);
+        _repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
+                        .ReturnsAsync((Role?)null);
+        
+        var result = await _controller.CreateUser(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
@@ -189,20 +134,17 @@ public class UserControllerTest
             Password = "123456",
             RoleId = 1
         };
-        var repositoryStub = new Mock<IAuthRepository>();
-        repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
+        
+        _repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
                         .ReturnsAsync(new Role());
-        repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
+        _repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
                         .ReturnsAsync((User?)null);
-        repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
+        _repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
+        _mappingHelperStub
             .Setup(conv => conv.ConvertTo<User, AddUserModel>(It.IsAny<AddUserModel>()))
             .Returns(new User());
-        var passwordHelperStub = new Mock<IPasswordManagerHelper>();
-        var controller = new UserController(repositoryStub.Object, mappingHelperStub.Object, passwordHelperStub.Object);
 
-        var result = await controller.CreateUser(model);
+        var result = await _controller.CreateUser(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
@@ -218,20 +160,16 @@ public class UserControllerTest
             Password = "123456",
             RoleId = 1
         };
-        var repositoryStub = new Mock<IAuthRepository>();
-        repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
+        _repositoryStub.Setup(repo => repo.GetRole(It.IsAny<int>()))
                         .ReturnsAsync(new Role());
-        repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
+        _repositoryStub.Setup(repo => repo.GetUser(It.IsAny<string>()))
                         .ReturnsAsync(new User());
-        repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
+        _repositoryStub.Setup(repo => repo.RegisterUser(It.IsAny<User>()));
+        _mappingHelperStub
             .Setup(conv => conv.ConvertTo<User, AddUserModel>(It.IsAny<AddUserModel>()))
             .Returns(new User());
-        var passwordHelperStub = new Mock<IPasswordManagerHelper>();
-        var controller = new UserController(repositoryStub.Object, mappingHelperStub.Object, passwordHelperStub.Object);
 
-        var result = await controller.CreateUser(model);
+        var result = await _controller.CreateUser(model);
 
         Assert.IsType<OkObjectResult>(result);
     }
