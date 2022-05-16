@@ -1,4 +1,5 @@
 using MeetUpBack.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeetUpBack.Data.Repositories;
 
@@ -27,5 +28,43 @@ public class AuthRepository : IAuthRepository
     {
         user.Status = false;
         await UpdateUser(user);
+    }
+
+    public async Task<User?> GetUser(string email)
+    {
+        return await _dataContext.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
+    }
+
+    public async Task<User?> GetUser(int id)
+    {
+        return await _dataContext.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+    }
+
+    public async Task AddRole(Role role)
+    {
+        _dataContext.Roles.Add(role);
+        await _dataContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateRole(Role role)
+    {
+        _dataContext.Roles.Update(role);
+        await _dataContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteRole(Role role)
+    {
+        role.Status = false;
+        await UpdateRole(role);
+    }
+
+    public async Task<Role?> GetRole(int id)
+    {
+        return await _dataContext.Roles.Where(r => r.Id == id).FirstOrDefaultAsync();
+    }
+
+    public async Task<Role?> GetRole(string name)
+    {
+        return await _dataContext.Roles.Where(r => r.Name == name).FirstOrDefaultAsync();
     }
 }

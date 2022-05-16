@@ -7,4 +7,11 @@ public interface IAuthRepository
     Task RegisterUser(User user);
     Task UpdateUser(User user);
     Task DeleteUser(User user);
+    Task<User?> GetUser(string email);
+    Task<User?> GetUser(int id);
+    Task AddRole(Role role);
+    Task UpdateRole(Role role);
+    Task DeleteRole(Role role);
+    Task<Role?> GetRole(int id);
+    Task<Role?> GetRole(string name);
 }
