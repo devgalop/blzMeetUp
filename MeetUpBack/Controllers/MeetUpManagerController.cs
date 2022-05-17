@@ -3,11 +3,13 @@ using MeetUpBack.Data.Entities;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
 using MeetUpBack.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeetUpBack.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class MeetUpManagerController : ControllerBase
 {
@@ -91,7 +93,7 @@ public class MeetUpManagerController : ControllerBase
         }
     }
 
-    [HttpGet("GetAllMeetUps")]
+    [HttpGet("GetAllMeetUps"), AllowAnonymous]
     public async Task<IActionResult> GetAllMeetUps()
     {
         try
@@ -106,7 +108,7 @@ public class MeetUpManagerController : ControllerBase
         }
     }
 
-    [HttpGet("GetMeetUpByLocation/{locationId}")]
+    [HttpGet("GetMeetUpByLocation/{locationId}"), AllowAnonymous]
     public async Task<IActionResult> GetMeetUpByLocation(int locationId)
     {
         try

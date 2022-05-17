@@ -2,11 +2,13 @@ using MeetUpBack.Data.Entities;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
 using MeetUpBack.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeetUpBack.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class LocationManagerController : ControllerBase
 {
@@ -39,7 +41,7 @@ public class LocationManagerController : ControllerBase
         }
     }
 
-    [HttpGet("GetCountries")]
+    [HttpGet("GetCountries"), AllowAnonymous]
     public async Task<IActionResult> GetCountries()
     {
         try
@@ -55,7 +57,7 @@ public class LocationManagerController : ControllerBase
         }
     }
 
-    [HttpGet("GetCountry/{id}")]
+    [HttpGet("GetCountry/{id}"), AllowAnonymous]
     public async Task<IActionResult> GetCountry(int id)
     {
         try
@@ -93,7 +95,7 @@ public class LocationManagerController : ControllerBase
         }
     }
 
-    [HttpGet("GetCities")]
+    [HttpGet("GetCities"), AllowAnonymous]
     public async Task<IActionResult> GetCities()
     {
         try
@@ -108,7 +110,7 @@ public class LocationManagerController : ControllerBase
         }
     }
 
-    [HttpGet("GetCity/{id}")]
+    [HttpGet("GetCity/{id}"), AllowAnonymous]
     public async Task<IActionResult> GetCity(int id)
     {
         try
@@ -188,7 +190,7 @@ public class LocationManagerController : ControllerBase
         }
     }
 
-    [HttpGet("GetLocations")]
+    [HttpGet("GetLocations"), AllowAnonymous]
     public async Task<IActionResult> GetLocations()
     {
         try
@@ -203,7 +205,7 @@ public class LocationManagerController : ControllerBase
         }
     }
 
-    [HttpGet("GetLocation/{id}")]
+    [HttpGet("GetLocation/{id}"), AllowAnonymous]
     public async Task<IActionResult> GetLocation(int id)
     {
         try
