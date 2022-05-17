@@ -14,20 +14,23 @@ namespace MeetUpBackTest.Controllers;
 
 public class MeetUpControllerTest
 {
+    private Mock<IMeetUpRepository> meetUpRepositoryStub;
+    private Mock<ILocationRepository> locationRepositoryStub;
+    private Mock<IMappingHelper> mappingHelperStub;
+    private MeetUpManagerController controller;
+
+    public MeetUpControllerTest()
+    {
+        meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+        locationRepositoryStub = new Mock<ILocationRepository>();
+        mappingHelperStub = new Mock<IMappingHelper>();
+        controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
+    }
+
     [Fact]
     public async Task CreateMeetUp_WithModelNull_ReturnsBadRequest()
     {
         AddMeetUpModel model = null!;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.CreateMeetUp(model);
 
@@ -44,17 +47,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(3),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.CreateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -70,16 +63,6 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(3),
             LocationId = 0
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.CreateMeetUp(model);
 
@@ -96,16 +79,6 @@ public class MeetUpControllerTest
             FinalDate = DateTime.MinValue,
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.CreateMeetUp(model);
 
@@ -122,17 +95,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now,
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.CreateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -148,16 +111,8 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(3),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync((Location?)null);
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.CreateMeetUp(model);
 
@@ -174,17 +129,14 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(3),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+        
         meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<string>())).ReturnsAsync((MeetUp?)null);
-        var locationRepositoryStub = new Mock<ILocationRepository>();
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
         mappingHelperStub
             .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
             .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.CreateMeetUp(model);
 
@@ -201,19 +153,15 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(3),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
         meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<string>()))
                             .ReturnsAsync(new MeetUp());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
         mappingHelperStub
             .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
             .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.CreateMeetUp(model);
 
         Assert.IsType<OkObjectResult>(result);
@@ -223,16 +171,6 @@ public class MeetUpControllerTest
     public async Task UpdateMeetUp_WithModelNull_ReturnsBadRequest()
     {
         UpdateMeetUpModel model = null!;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateMeetUp(model);
 
@@ -250,16 +188,6 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateMeetUp(model);
 
@@ -277,17 +205,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.UpdateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -304,17 +222,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 0
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.UpdateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -331,16 +239,6 @@ public class MeetUpControllerTest
             FinalDate = DateTime.MinValue,
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateMeetUp(model);
 
@@ -358,17 +256,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.UpdateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -385,16 +273,9 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
-        var locationRepositoryStub = new Mock<ILocationRepository>();
+
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync((Location?)null);
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateMeetUp(model);
 
@@ -412,18 +293,10 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync((MeetUp?)null);
-        var locationRepositoryStub = new Mock<ILocationRepository>();
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
-            .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateMeetUp(model);
 
@@ -441,18 +314,15 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+        
         meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
         mappingHelperStub
             .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
             .Returns(new MeetUp());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateMeetUp(model);
 
@@ -463,12 +333,6 @@ public class MeetUpControllerTest
     public async Task DeleteMeetUp_WithInvalidId_ReturnsBadRequest()
     {
         int id = 0;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.DeleteMeetUp(id);
 
@@ -479,12 +343,8 @@ public class MeetUpControllerTest
     public async Task DeleteMeetUp_WithUnexistMeetUp_ReturnsNotFound()
     {
         int id = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync((MeetUp?)null);
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.DeleteMeetUp(id);
 
@@ -495,12 +355,8 @@ public class MeetUpControllerTest
     public async Task DeleteMeetUp_WithValidModel_ReturnsOk()
     {
         int id = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.DeleteMeetUp(id);
 
@@ -511,14 +367,6 @@ public class MeetUpControllerTest
     public async Task GetMeetUpByLocation_WithInvalidLocation_ReturnsBadRequest()
     {
         int locationId = 0;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.GetMeetUpsByLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new List<MeetUp>());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.GetMeetUpByLocation(locationId);
 
@@ -529,14 +377,8 @@ public class MeetUpControllerTest
     public async Task GetMeetUpByLocation_WithUnexistLocation_ReturnsBadRequest()
     {
         int locationId = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.GetMeetUpsByLocation(It.IsAny<int>()))
-                            .ReturnsAsync(new List<MeetUp>());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync((Location?)null);
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.GetMeetUpByLocation(locationId);
 
@@ -547,15 +389,12 @@ public class MeetUpControllerTest
     public async Task GetMeetUpByLocation_WithValidLocation_ReturnsOk()
     {
         int locationId = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
         meetUpRepositoryStub.Setup(x => x.GetMeetUpsByLocation(It.IsAny<int>()))
                             .ReturnsAsync(new List<MeetUp>());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
+        
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync(new Location());
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.GetMeetUpByLocation(locationId);
 
         Assert.IsType<OkObjectResult>(result);
@@ -565,18 +404,6 @@ public class MeetUpControllerTest
     public async Task AddEvent_WithModelNull_ReturnsBadRequest()
     {
         AddEventModel model = null!;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
-            .Returns(new Event());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.AddEvent(model);
 
@@ -592,18 +419,6 @@ public class MeetUpControllerTest
             StartHour = "asdfa",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
-            .Returns(new Event());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.AddEvent(model);
 
@@ -619,19 +434,7 @@ public class MeetUpControllerTest
             StartHour = "22:35",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
-            .Returns(new Event());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.AddEvent(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -646,18 +449,6 @@ public class MeetUpControllerTest
             StartHour = string.Empty,
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
-            .Returns(new Event());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.AddEvent(model);
 
@@ -673,18 +464,6 @@ public class MeetUpControllerTest
             StartHour = "22:35",
             MeetUpId = 0
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
-            .Returns(new Event());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.AddEvent(model);
 
@@ -700,18 +479,9 @@ public class MeetUpControllerTest
             StartHour = "22:35",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
+
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync((MeetUp?)null);
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
-            .Returns(new Event());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.AddEvent(model);
 
@@ -727,18 +497,15 @@ public class MeetUpControllerTest
             StartHour = "22:35",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+        
         meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
                             .ReturnsAsync((Event?)null);
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
         mappingHelperStub
             .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
             .Returns(new Event());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.AddEvent(model);
 
@@ -754,18 +521,15 @@ public class MeetUpControllerTest
             StartHour = "22:35",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+        
         meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
                             .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
         mappingHelperStub
             .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
             .Returns(new Event());
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.AddEvent(model);
 
@@ -782,17 +546,6 @@ public class MeetUpControllerTest
             StartHour = "22:89",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
-                            .ReturnsAsync(new Event());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateEvent(model);
 
@@ -809,17 +562,6 @@ public class MeetUpControllerTest
             StartHour = "22:30",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
-                            .ReturnsAsync(new Event());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateEvent(model);
 
@@ -836,18 +578,7 @@ public class MeetUpControllerTest
             StartHour = "22:30",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
-                            .ReturnsAsync(new Event());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.UpdateEvent(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -863,17 +594,6 @@ public class MeetUpControllerTest
             StartHour = string.Empty,
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
-                            .ReturnsAsync(new Event());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateEvent(model);
 
@@ -890,17 +610,6 @@ public class MeetUpControllerTest
             StartHour = "22:30",
             MeetUpId = 0
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
-                            .ReturnsAsync(new Event());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateEvent(model);
 
@@ -917,17 +626,9 @@ public class MeetUpControllerTest
             StartHour = "22:30",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
+
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
                             .ReturnsAsync((Event?)null);
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync((Event?)null);
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateEvent(model);
 
@@ -944,17 +645,10 @@ public class MeetUpControllerTest
             StartHour = "22:30",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.UpdateEvent(It.IsAny<Event>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync((MeetUp?)null);
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
                             .ReturnsAsync(new Event());
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateEvent(model);
 
@@ -971,7 +665,7 @@ public class MeetUpControllerTest
             StartHour = "22:30",
             MeetUpId = 1
         };
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+        
         meetUpRepositoryStub.Setup(x => x.UpdateEvent(It.IsAny<Event>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
@@ -979,9 +673,6 @@ public class MeetUpControllerTest
                             .ReturnsAsync(new Event());
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
                             .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.UpdateEvent(model);
 
@@ -992,13 +683,6 @@ public class MeetUpControllerTest
     public async Task DeleteEvent_WithInvalidId_ReturnsBadRequest()
     {
         int id = 0;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.DeleteEvent(It.IsAny<Event>()));
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.DeleteEvent(id);
 
@@ -1009,13 +693,9 @@ public class MeetUpControllerTest
     public async Task DeleteEvent_WithUnexistEvent_ReturnsNotFound()
     {
         int id = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.DeleteEvent(It.IsAny<Event>()));
+
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
                             .ReturnsAsync((Event?)null);
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.DeleteEvent(id);
 
@@ -1026,13 +706,10 @@ public class MeetUpControllerTest
     public async Task DeleteEvent_WithValidModel_ReturnsOk()
     {
         int id = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+
         meetUpRepositoryStub.Setup(x => x.DeleteEvent(It.IsAny<Event>()));
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
                             .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.DeleteEvent(id);
 
@@ -1043,12 +720,6 @@ public class MeetUpControllerTest
     public async Task GetEvent_WithInvalidId_ReturnsBadRequest()
     {
         int id = 0;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
-                            .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.GetEvent(id);
 
@@ -1059,13 +730,10 @@ public class MeetUpControllerTest
     public async Task GetEvent_WithUnexistEvent_ReturnsNotFound()
     {
         int id = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
                             .ReturnsAsync((Event?)null);
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
-
+        
         var result = await controller.GetEvent(id);
 
         Assert.IsType<NotFoundObjectResult>(result);
@@ -1075,12 +743,9 @@ public class MeetUpControllerTest
     public async Task GetEvent_WithValidModel_ReturnsOk()
     {
         int id = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+        
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
                             .ReturnsAsync(new Event());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.GetEvent(id);
 
@@ -1091,14 +756,6 @@ public class MeetUpControllerTest
     public async Task GetEventsByMeetUp_WithInvalidId_ReturnsBadRequest()
     {
         int id = 0;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.GetEventsByMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new List<Event>());
-        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new MeetUp());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.GetEventsByMeetUp(id);
 
@@ -1109,14 +766,9 @@ public class MeetUpControllerTest
     public async Task GetEventsByMeetUp_WithUnexistMeetUp_ReturnsNotFound()
     {
         int id = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
-        meetUpRepositoryStub.Setup(x => x.GetEventsByMeetUp(It.IsAny<int>()))
-                            .ReturnsAsync(new List<Event>());
+
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync((MeetUp?)null);
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.GetEventsByMeetUp(id);
 
@@ -1127,14 +779,11 @@ public class MeetUpControllerTest
     public async Task GetEventsByMeetUp_WithValidModel_ReturnsOk()
     {
         int id = 1;
-        var meetUpRepositoryStub = new Mock<IMeetUpRepository>();
+        
         meetUpRepositoryStub.Setup(x => x.GetEventsByMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new List<Event>());
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
-        var locationRepositoryStub = new Mock<ILocationRepository>();
-        var mappingHelperStub = new Mock<IMappingHelper>();
-        var controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
 
         var result = await controller.GetEventsByMeetUp(id);
 
