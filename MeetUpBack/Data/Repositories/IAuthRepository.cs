@@ -12,6 +12,7 @@ public interface IAuthRepository
     Task AddRole(Role role);
     Task UpdateRole(Role role);
     Task DeleteRole(Role role);
+    Task<List<Role>> GetRoles();
     Task<Role?> GetRole(int id);
     Task<Role?> GetRole(string name);
     Task InsertSession(Session session);

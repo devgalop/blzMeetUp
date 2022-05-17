@@ -32,12 +32,18 @@ public class AuthRepository : IAuthRepository
 
     public async Task<User?> GetUser(string email)
     {
-        return await _dataContext.Users.Include(s => s.Session).Where(u => u.Email == email).FirstOrDefaultAsync();
+        return await _dataContext.Users
+                                    .Include(s => s.Session)
+                                    .Where(u => u.Email == email && u.Status)
+                                    .FirstOrDefaultAsync();
     }
 
     public async Task<User?> GetUser(int id)
     {
-        return await _dataContext.Users.Include(s => s.Session).Where(u => u.Id == id).FirstOrDefaultAsync();
+        return await _dataContext.Users
+                                    .Include(s => s.Session)
+                                    .Where(u => u.Id == id && u.Status)
+                                    .FirstOrDefaultAsync();
     }
 
     public async Task AddRole(Role role)
@@ -58,14 +64,23 @@ public class AuthRepository : IAuthRepository
         await UpdateRole(role);
     }
 
+    public async Task<List<Role>> GetRoles()
+    {
+        return await _dataContext.Roles.Where(r => r.Status).ToListAsync();
+    }
+
     public async Task<Role?> GetRole(int id)
     {
-        return await _dataContext.Roles.Where(r => r.Id == id).FirstOrDefaultAsync();
+        return await _dataContext.Roles
+                                    .Where(r => r.Id == id && r.Status)
+                                    .FirstOrDefaultAsync();
     }
 
     public async Task<Role?> GetRole(string name)
     {
-        return await _dataContext.Roles.Where(r => r.Name == name).FirstOrDefaultAsync();
+        return await _dataContext.Roles
+                                    .Where(r => r.Name == name && r.Status)
+                                    .FirstOrDefaultAsync();
     }
 
     public async Task InsertSession(Session session)

@@ -14,27 +14,27 @@ public class MeetUpRepository : IMeetUpRepository
 
     public async Task<List<MeetUp>> GetMeetUps()
     {
-        return await _dataContext.MeetUps.ToListAsync();
+        return await _dataContext.MeetUps.Where(m => m.Status).ToListAsync();
     }
 
     public async Task<List<MeetUp>> GetMeetUpsByLocation(int locationId)
     {
-        return await _dataContext.MeetUps.Where(m => m.LocationId == locationId).ToListAsync();
+        return await _dataContext.MeetUps.Where(m => m.LocationId == locationId && m.Status).ToListAsync();
     }
 
     public async Task<MeetUp?> GetMeetUp(int id)
     {
-        return await _dataContext.MeetUps.Where(m => m.Id == id).FirstOrDefaultAsync();
+        return await _dataContext.MeetUps.Where(m => m.Id == id && m.Status).FirstOrDefaultAsync();
     }
 
     public async Task<MeetUp?> GetMeetUp(string name)
     {
-        return await _dataContext.MeetUps.Where(m => m.Name == name).FirstOrDefaultAsync();
+        return await _dataContext.MeetUps.Where(m => m.Name == name && m.Status).FirstOrDefaultAsync();
     }
 
     public async Task<List<MeetUp>> GetMeetUpsByDate(DateTime date)
     {
-        return await _dataContext.MeetUps.Where(m => m.InitialDate == date).ToListAsync();
+        return await _dataContext.MeetUps.Where(m => m.InitialDate == date && m.Status).ToListAsync();
     }
 
     public async Task CreateMeetUp(MeetUp meetUp)
@@ -75,17 +75,17 @@ public class MeetUpRepository : IMeetUpRepository
 
     public async Task<Event?> GetEvent(int id)
     {
-        return await _dataContext.Events.Where(x => x.Id == id).FirstOrDefaultAsync();
+        return await _dataContext.Events.Where(x => x.Id == id && x.Status).FirstOrDefaultAsync();
     }
 
     public async Task<Event?> GetEvent(string name)
     {
-        return await _dataContext.Events.Where(x => x.Name == name).FirstOrDefaultAsync();
+        return await _dataContext.Events.Where(x => x.Name == name && x.Status).FirstOrDefaultAsync();
     }
 
     public async Task<List<Event>> GetEventsByMeetUp(int meetUpId)
     {
-        return await _dataContext.Events.Where(x => x.MeetUpId == meetUpId).ToListAsync();
+        return await _dataContext.Events.Where(x => x.MeetUpId == meetUpId && x.Status).ToListAsync();
     }
 
 }
