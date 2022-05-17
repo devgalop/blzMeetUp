@@ -15,5 +15,5 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public bool Status { get; set; } = true;
     public int RoleId { get; set; }
-    public Session Session { get; set; } = new Session();
+    public Session Session { get; set; } = null!;
 }

@@ -2,11 +2,13 @@ using MeetUpBack.Data.Entities;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
 using MeetUpBack.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeetUpBack.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
@@ -26,7 +28,7 @@ public class UserController : ControllerBase
         _tokenFactory = tokenFactory;
     }
 
-    [HttpPost("CreateUser")]
+    [HttpPost("CreateUser"), AllowAnonymous]
     public async Task<IActionResult> CreateUser(AddUserModel model)
     {
         try
@@ -90,6 +92,7 @@ public class UserController : ControllerBase
         }
     }
 
+    
     [HttpGet("GetUser/{id}")]
     public async Task<IActionResult> GetUser(int id)
     {
@@ -110,9 +113,11 @@ public class UserController : ControllerBase
     {
         try
         {
-            if(model == null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password)) throw new Exception("Model is not valid");
+            if(model == null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.LastPassword)) throw new Exception("Model is not valid");
             User? userFound = await _repository.GetUser(model.Email);
             if(userFound == null) return NotFound("User has not been found");
+            bool IsValidPassword = _passwordManager.IsValidHashCode(model.LastPassword,userFound.PasswordHash);
+            if(!IsValidPassword) return BadRequest("Last password does not match");
             string passwordHash = _passwordManager.GenerateHashCode(model.Password);
             userFound.PasswordHash = passwordHash;
             await _repository.UpdateUser(userFound);
@@ -125,7 +130,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPost("Login")]
+    [HttpPost("Login"),AllowAnonymous]
     public async Task<IActionResult> Login(LoginModel model)
     {
         try

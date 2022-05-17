@@ -21,6 +21,9 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<User>()
+            .HasIndex(t => t.Email)
+            .IsUnique();
         new SeedDb(modelBuilder).Seed();
     }
 }
