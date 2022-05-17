@@ -101,7 +101,8 @@ public class UserController : ControllerBase
             if (id <= 0) throw new Exception("Model is invalid.");
             User? userFound = await _repository.GetUser(id); 
             if(userFound == null) return NotFound("User has not been found");
-            return Ok(userFound);
+            BasicUserModel user = _mappingHelper.ConvertTo<BasicUserModel,User>(userFound);
+            return Ok(user);
         }
         catch (Exception ex)
         {

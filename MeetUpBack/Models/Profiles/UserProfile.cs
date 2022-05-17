@@ -12,5 +12,7 @@ public class UserProfile : Profile
         CreateMap<User,AddUserModel>();
         CreateMap<UpdateUserModel, User>();
         CreateMap<User,UpdateUserModel>();
+        CreateMap<BasicUserModel, User>();
+        CreateMap<User, BasicUserModel>();
     }
 }
