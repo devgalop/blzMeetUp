@@ -99,7 +99,9 @@ public class UserController : ControllerBase
         try
         {
             if (id <= 0) throw new Exception("Model is invalid.");
-            return Ok(await _repository.GetUser(id));
+            User? userFound = await _repository.GetUser(id); 
+            if(userFound == null) return NotFound("User has not been found");
+            return Ok(userFound);
         }
         catch (Exception ex)
         {
