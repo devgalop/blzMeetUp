@@ -32,12 +32,12 @@ public class AuthRepository : IAuthRepository
 
     public async Task<User?> GetUser(string email)
     {
-        return await _dataContext.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
+        return await _dataContext.Users.Include(s => s.Session).Where(u => u.Email == email).FirstOrDefaultAsync();
     }
 
     public async Task<User?> GetUser(int id)
     {
-        return await _dataContext.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+        return await _dataContext.Users.Include(s => s.Session).Where(u => u.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task AddRole(Role role)

@@ -156,7 +156,8 @@ public class UserController : ControllerBase
                 {
                     Token = tokenModel.Token,
                     Created = DateTime.Now,
-                    Expires = tokenModel.ExpiresIn
+                    Expires = tokenModel.ExpiresIn,
+                    UserId = userFound.Id
                 };
                 await _repository.InsertSession(newSession);
             }
