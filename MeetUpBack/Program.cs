@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.Configure<JwtConfigModel>(builder.Configuration.GetSection("JwtConfig"));
+builder.Services.Configure<SmtpConfigModel>(builder.Configuration.GetSection("SmtpConfig"));
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DBMEETUP"));
