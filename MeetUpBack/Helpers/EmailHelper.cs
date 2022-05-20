@@ -1,4 +1,3 @@
-
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MeetUpBack.Models.Dto;
@@ -26,7 +25,8 @@ public class EmailHelper : IEmailHelper
         email.Body = new TextPart(TextFormat.Html) { Text = html };
 
         using var smtp = new SmtpClient();
-        smtp.Connect(_config.Host, _config.Port, SecureSocketOptions.StartTls);
+        smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
+        smtp.Connect(_config.Host, _config.Port, SecureSocketOptions.SslOnConnect);
         smtp.Authenticate(_config.Username, _config.Password);
         smtp.Send(email);
         smtp.Disconnect(true);

@@ -34,7 +34,8 @@ builder.Services.AddScoped<ILocationRepository, LocationRepository>()
                 .AddScoped<IAuthRepository, AuthRepository>()
                 .AddScoped<IMappingHelper, MappingHelper>()
                 .AddScoped<ITokenFactoryHelper,TokenFactoryHelper>()
-                .AddScoped<IPasswordManagerHelper,PasswordManagerHelper>();
+                .AddScoped<IPasswordManagerHelper,PasswordManagerHelper>()
+                .AddScoped<IEmailHelper,EmailHelper>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
