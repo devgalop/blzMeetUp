@@ -170,4 +170,24 @@ public class UserController : ControllerBase
             return BadRequest(ex);
         }
     }
+
+    [HttpGet("Logout/{id}")]
+    public async Task<IActionResult> Logout(int id)
+    {
+        try
+        {
+            if(id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
+            User? userFound = await _repository.GetUser(id);
+            if(userFound == null) return NotFound("User has not been found");
+            Session? sessionFound = await _repository.GetSession(id);
+            if(sessionFound == null) return NotFound("User has not have session");
+            await _repository.DeleteSession(sessionFound);
+            return Ok("Session has been closed successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
 }
