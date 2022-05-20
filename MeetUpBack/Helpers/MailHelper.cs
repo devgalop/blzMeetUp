@@ -11,9 +11,16 @@ public class MailHelper : IMailHelper
 {
     private readonly SmtpConfigModel _config;
 
-    public MailHelper(IOptions<SmtpConfigModel> config)
+    public MailHelper()
     {
-        _config = config.Value;
+        _config = new SmtpConfigModel()
+        {
+            Host = DotNetEnv.Env.GetString("SMTP__HOST"),
+            Port = DotNetEnv.Env.GetInt("SMTP__PORT"),
+            Username = DotNetEnv.Env.GetString("SMTP__USERNAME"),
+            Password = DotNetEnv.Env.GetString("SMTP__PASSWORD"),
+            EmailFrom = DotNetEnv.Env.GetString("SMTP__EMAILFROM")
+        };
     }
 
     public MailResponseModel Send(MailRequestModel model)

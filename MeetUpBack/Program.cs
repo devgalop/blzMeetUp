@@ -11,15 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.Configure<JwtConfigModel>(builder.Configuration.GetSection("JwtConfig"));
-builder.Services.Configure<SmtpConfigModel>(builder.Configuration.GetSection("SmtpConfig"));
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DBMEETUP"));
+    options.UseSqlServer(DotNetEnv.Env.GetString("DATABASE__CONNECTIONSTRING"));
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
 {
-    var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtConfig:SecretKey"]);
+    var key = Encoding.ASCII.GetBytes(DotNetEnv.Env.GetString("JWT__SECRETKEY"));
     opt.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuerSigningKey = true,
@@ -38,6 +36,9 @@ builder.Services.AddScoped<ILocationRepository, LocationRepository>()
                 .AddScoped<IMailHelper,MailHelper>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Configuration.AddEnvironmentVariables();
+DotNetEnv.Env.Load();
 
 var app = builder.Build();
 

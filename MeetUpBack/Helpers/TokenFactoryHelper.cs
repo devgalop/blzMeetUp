@@ -12,9 +12,12 @@ public class TokenFactoryHelper : ITokenFactoryHelper
 {
     private readonly JwtConfigModel _config;
 
-    public TokenFactoryHelper(IOptions<JwtConfigModel> config)
+    public TokenFactoryHelper()
     {
-        _config = config.Value;
+        _config = new JwtConfigModel()
+        {
+            SecretKey = DotNetEnv.Env.GetString("JWT__SECRETKEY")
+        };
     }
 
     public TokenModel GenerateToken(User user)
