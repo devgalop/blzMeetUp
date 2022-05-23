@@ -12,5 +12,6 @@ public class Location
     public string Address { get; set; } = string.Empty;
     public int Capacity { get; set; }
     public int CityId { get; set; }
+    public City City { get; set; } = null!;
     public List<MeetUp> MeetUps { get; set; } = new List<MeetUp>();
 }

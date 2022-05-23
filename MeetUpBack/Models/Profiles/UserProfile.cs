@@ -14,5 +14,8 @@ public class UserProfile : Profile
         CreateMap<User,UpdateUserModel>();
         CreateMap<BasicUserModel, User>();
         CreateMap<User, BasicUserModel>();
+
+        CreateMap<Role, BasicRoleModel>();
+        CreateMap<BasicRoleModel, Role>();
     }
 }

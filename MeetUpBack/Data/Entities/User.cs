@@ -15,5 +15,8 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public bool Status { get; set; } = true;
     public int RoleId { get; set; }
+    public Role Role { get; set; } = null!;
     public Session Session { get; set; } = null!;
+    public List<UserMeetUpOwner> OwnMeetings { get; set; } = null!;
+    public List<UserMeetUpAssistant> Attendance { get; set; } = null!;
 }

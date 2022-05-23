@@ -34,6 +34,7 @@ public class AuthRepository : IAuthRepository
     {
         return await _dataContext.Users
                                     .Include(s => s.Session)
+                                    .Include(r => r.Role)
                                     .Where(u => u.Email == email && u.Status)
                                     .FirstOrDefaultAsync();
     }
@@ -42,6 +43,7 @@ public class AuthRepository : IAuthRepository
     {
         return await _dataContext.Users
                                     .Include(s => s.Session)
+                                    .Include(r => r.Role)
                                     .Where(u => u.Id == id && u.Status)
                                     .FirstOrDefaultAsync();
     }
@@ -103,6 +105,9 @@ public class AuthRepository : IAuthRepository
 
     public async Task<Session?> GetSession(int userId)
     {
-        return await _dataContext.Sessions.Where(s => s.UserId == userId).FirstOrDefaultAsync();
+        return await _dataContext.Sessions
+                                    .Include(s => s.User)
+                                    .Where(s => s.UserId == userId)
+                                    .FirstOrDefaultAsync();
     }
 }

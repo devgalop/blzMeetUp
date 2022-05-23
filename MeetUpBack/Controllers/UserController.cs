@@ -41,7 +41,8 @@ public class UserController : ControllerBase
             await _repository.RegisterUser(user);
             User? userFound = await _repository.GetUser(model.Email);
             if (userFound == null) throw new Exception("User has not been registered into the repository.");
-            return Ok(userFound);
+            BasicUserModel userResult = _mappingHelper.ConvertTo<BasicUserModel,User>(userFound);
+            return Ok(userResult);
         }
         catch (Exception ex)
         {

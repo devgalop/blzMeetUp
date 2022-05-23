@@ -13,4 +13,5 @@ public class Event
     public string Details { get; set; } = string.Empty;
     public bool Status { get; set; } = true;
     public int MeetUpId { get; set; }
+    public MeetUp MeetUp { get; set; } = null!;
 }
