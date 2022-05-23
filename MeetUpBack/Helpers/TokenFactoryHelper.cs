@@ -30,6 +30,7 @@ public class TokenFactoryHelper : ITokenFactoryHelper
             {
                 new Claim(JwtRegisteredClaimNames.NameId,user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
+                new Claim(ClaimTypes.Role, user.Role.Name),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
             }),
             Expires = DateTime.Now.AddHours(12),

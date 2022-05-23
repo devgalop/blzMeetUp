@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeetUpBack.Controllers;
 
 [ApiController]
-[Authorize]
+[Authorize(Roles = "Admin")]
 [Route("api/[controller]")]
 public class LocationManagerController : ControllerBase
 {
@@ -157,7 +157,7 @@ public class LocationManagerController : ControllerBase
             City? cityFound = await _repository.GetCity(model.CityId);
             if (cityFound == null) throw new Exception("City has not been found");
             Location? location = await _repository.GetLocation(model.Id);
-            if(location == null) throw new Exception("Location has not been found");
+            if (location == null) throw new Exception("Location has not been found");
             location.Name = model.Name;
             location.Address = model.Address;
             location.Capacity = model.Capacity;
@@ -179,7 +179,7 @@ public class LocationManagerController : ControllerBase
         {
             if (id <= 0) throw new ArgumentOutOfRangeException("Id is invalid");
             Location? locationFound = await _repository.GetLocation(id);
-            if(locationFound == null) throw new Exception("Location has not been found");
+            if (locationFound == null) throw new Exception("Location has not been found");
             await _repository.DeleteLocation(locationFound);
             return Ok("Location has been deleted");
         }
@@ -210,9 +210,9 @@ public class LocationManagerController : ControllerBase
     {
         try
         {
-            if(id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
+            if (id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
             Location? location = await _repository.GetLocation(id);
-            if(location == null) return NotFound("Location has not been found");
+            if (location == null) return NotFound("Location has not been found");
             return Ok(location);
         }
         catch (Exception ex)
