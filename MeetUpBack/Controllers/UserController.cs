@@ -166,6 +166,7 @@ public class UserController : ControllerBase
                 };
                 await _repository.InsertSession(newSession);
             }
+            HttpContext.Session.SetString("username",userFound.Email);
             return Ok(tokenModel);
         }
         catch (Exception ex)
