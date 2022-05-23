@@ -66,6 +66,9 @@ public class UserController : ControllerBase
             userFound.Status = model.Status;
             userFound.RoleId = model.RoleId;
             await _repository.UpdateUser(userFound);
+            userFound = await _repository.GetUser(model.Id);
+            if (userFound == null) return NotFound("User has not been found.");
+            BasicUserModel userResult = _mappingHelper.ConvertTo<BasicUserModel,User>(userFound);
             return Ok(userFound);
         }
         catch (Exception ex)

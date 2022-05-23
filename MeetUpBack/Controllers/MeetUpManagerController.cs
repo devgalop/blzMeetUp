@@ -40,7 +40,8 @@ public class MeetUpManagerController : ControllerBase
             await _repository.CreateMeetUp(meetUp);
             var meetUpFound = await _repository.GetMeetUp(meetUp.Name);
             if(meetUpFound == null)throw new Exception("Meet Up has not been added to repository");
-            return Ok(meetUpFound);
+            BasicMeetUpModel meetUpResult = _mappingHelper.ConvertTo<BasicMeetUpModel,MeetUp>(meetUpFound);
+            return Ok(meetUpResult);
         }
         catch (Exception ex)
         {
@@ -66,7 +67,10 @@ public class MeetUpManagerController : ControllerBase
             meetUpFound.FinalDate = model.FinalDate;
             meetUpFound.LocationId = model.LocationId;
             await _repository.UpdateMeetUp(meetUpFound);
-            return Ok(meetUpFound);
+            meetUpFound = await _repository.GetMeetUp(model.Id);
+            if(meetUpFound == null) return NotFound("Meet Up has not been found");
+            BasicMeetUpModel meetUpResult = _mappingHelper.ConvertTo<BasicMeetUpModel,MeetUp>(meetUpFound);
+            return Ok(meetUpResult);
         }
         catch (Exception ex)
         {
@@ -99,7 +103,8 @@ public class MeetUpManagerController : ControllerBase
         try
         {
             List<MeetUp> meetUpList = await _repository.GetMeetUps();
-            return Ok(meetUpList);
+            List<BasicMeetUpModel> result = _mappingHelper.ConvertTo<List<BasicMeetUpModel>,List<MeetUp>>(meetUpList);
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -117,7 +122,8 @@ public class MeetUpManagerController : ControllerBase
             Location? locationFound = await _locationRepo.GetLocation(locationId);
             if(locationFound == null)throw new Exception("Location does not exist");
             List<MeetUp> meetUpList = await _repository.GetMeetUpsByLocation(locationId);
-            return Ok(meetUpList);
+            List<BasicMeetUpModel> result = _mappingHelper.ConvertTo<List<BasicMeetUpModel>,List<MeetUp>>(meetUpList);
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -139,7 +145,8 @@ public class MeetUpManagerController : ControllerBase
             await _repository.CreateEvent(meetUpEvent);
             Event? eventFound = await _repository.GetEvent(model.Name);
             if(eventFound == null) throw new Exception("Event has not been added to the repository");
-            return Ok(eventFound);
+            BasicEventModel eventResult = _mappingHelper.ConvertTo<BasicEventModel,Event>(eventFound);
+            return Ok(eventResult);
         }
         catch (Exception ex)
         {
@@ -165,7 +172,10 @@ public class MeetUpManagerController : ControllerBase
             eventFound.Status = model.Status;
             eventFound.MeetUpId = model.MeetUpId;
             await _repository.UpdateEvent(eventFound);
-            return Ok(eventFound);
+            eventFound = await _repository.GetEvent(model.Id);
+            if(eventFound == null) return NotFound("Event has not been found");
+            BasicEventModel eventResult = _mappingHelper.ConvertTo<BasicEventModel,Event>(eventFound);
+            return Ok(eventResult);
         }
         catch (Exception ex)
         {
@@ -201,7 +211,8 @@ public class MeetUpManagerController : ControllerBase
             MeetUp? meetUpFound = await _repository.GetMeetUp(meetUpId);
             if(meetUpFound == null) return NotFound("Meet Up does not exist");
             List<Event> events = await _repository.GetEventsByMeetUp(meetUpId);
-            return Ok(events);
+            List<BasicEventModel> eventResult = _mappingHelper.ConvertTo<List<BasicEventModel>,List<Event>>(events);
+            return Ok(eventResult);
         }
         catch (Exception ex)
         {
@@ -218,7 +229,8 @@ public class MeetUpManagerController : ControllerBase
             if(id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
             Event? eventFound = await _repository.GetEvent(id);
             if(eventFound == null) return NotFound("Event has not been found");
-            return Ok(eventFound);
+            BasicEventModel eventResult = _mappingHelper.ConvertTo<BasicEventModel,Event>(eventFound);
+            return Ok(eventResult);
         }
         catch (Exception ex)
         {

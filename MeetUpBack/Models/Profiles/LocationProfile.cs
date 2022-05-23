@@ -12,6 +12,8 @@ public class LocationProfile : Profile
         CreateMap<Location, AddLocationModel>();
         CreateMap<UpdateLocationModel, Location>();
         CreateMap<Location, UpdateLocationModel>();
+        CreateMap<Location, BasicLocationModel>();
+        CreateMap<BasicLocationModel, Location>();
 
         CreateMap<AddCityModel, City>();
         CreateMap<City, AddCityModel>();

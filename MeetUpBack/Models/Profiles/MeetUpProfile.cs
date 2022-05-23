@@ -10,14 +10,18 @@ public class MeetUpProfile : Profile
     {
         CreateMap<AddMeetUpModel, MeetUp>();
         CreateMap<MeetUp, AddMeetUpModel>();
-
+        CreateMap<BasicMeetUpModel, MeetUp>();
+        CreateMap<MeetUp, BasicMeetUpModel>();
+        CreateMap<InfoMeetUpModel, MeetUp>();
+        CreateMap<MeetUp, InfoMeetUpModel>();
         CreateMap<UpdateMeetUpModel, MeetUp>();
         CreateMap<MeetUp, UpdateMeetUpModel>();
 
         CreateMap<AddEventModel, Event>();
         CreateMap<Event, AddEventModel>();
-
         CreateMap<UpdateEventModel, Event>();
         CreateMap<Event, UpdateEventModel>();
+        CreateMap<BasicEventModel, Event>();
+        CreateMap<Event, BasicEventModel>();
     }
 }

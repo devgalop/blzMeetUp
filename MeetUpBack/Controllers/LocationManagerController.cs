@@ -32,7 +32,8 @@ public class LocationManagerController : ControllerBase
             await _repository.InsertCountry(country);
             var countryFound = await _repository.GetCountry(country.Name);
             if (countryFound == null) throw new Exception("Country has not been added to repository");
-            return Ok(countryFound);
+            BasicCountryModel countryResult = _mappingHelper.ConvertTo<BasicCountryModel,Country>(countryFound);
+            return Ok(countryResult);
         }
         catch (Exception ex)
         {
@@ -65,7 +66,8 @@ public class LocationManagerController : ControllerBase
             if (id <= 0) throw new ArgumentOutOfRangeException("Id is invalid");
             var countryFound = await _repository.GetCountry(id);
             if (countryFound == null) return NotFound("Country has not been found");
-            return Ok(countryFound);
+            BasicCountryModel countryResult = _mappingHelper.ConvertTo<BasicCountryModel,Country>(countryFound);
+            return Ok(countryResult);
         }
         catch (Exception ex)
         {
@@ -86,7 +88,8 @@ public class LocationManagerController : ControllerBase
             await _repository.InsertCity(city);
             var cityFound = await _repository.GetCity(model.Name);
             if (cityFound == null) throw new Exception("City has not been added to repository");
-            return Ok(cityFound);
+            BasicCityModel cityResult = _mappingHelper.ConvertTo<BasicCityModel,City>(cityFound);
+            return Ok(cityResult);
         }
         catch (Exception ex)
         {
@@ -101,7 +104,8 @@ public class LocationManagerController : ControllerBase
         try
         {
             List<City> cities = await _repository.GetCities();
-            return Ok(cities);
+            List<BasicCityModel> result = _mappingHelper.ConvertTo<List<BasicCityModel>,List<City>>(cities);
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -118,7 +122,8 @@ public class LocationManagerController : ControllerBase
             if (id <= 0) throw new ArgumentOutOfRangeException("Id is invalid");
             var cityFound = await _repository.GetCity(id);
             if (cityFound == null) return NotFound("City has not been found");
-            return Ok(cityFound);
+            BasicCityModel cityResult = _mappingHelper.ConvertTo<BasicCityModel,City>(cityFound);
+            return Ok(cityResult);
         }
         catch (Exception ex)
         {
@@ -139,7 +144,8 @@ public class LocationManagerController : ControllerBase
             await _repository.InsertLocation(location);
             var locationFound = await _repository.GetLocation(model.Name);
             if (locationFound == null) throw new Exception("Location has not been added to repository");
-            return Ok(locationFound);
+            BasicLocationModel locationResult = _mappingHelper.ConvertTo<BasicLocationModel,Location>(locationFound);
+            return Ok(locationResult);
         }
         catch (Exception ex)
         {
@@ -163,7 +169,10 @@ public class LocationManagerController : ControllerBase
             location.Capacity = model.Capacity;
             location.CityId = model.CityId;
             await _repository.UpdateLocation(location);
-            return Ok(location);
+            location = await _repository.GetLocation(model.Id);
+            if (location == null) throw new Exception("Location has not been found");
+            BasicLocationModel locationResult = _mappingHelper.ConvertTo<BasicLocationModel,Location>(location);
+            return Ok(locationResult);
         }
         catch (Exception ex)
         {
@@ -196,7 +205,8 @@ public class LocationManagerController : ControllerBase
         try
         {
             List<Location> locations = await _repository.GetLocations();
-            return Ok(locations);
+            List<BasicLocationModel> result = _mappingHelper.ConvertTo<List<BasicLocationModel>,List<Location>>(locations);
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -213,7 +223,8 @@ public class LocationManagerController : ControllerBase
             if (id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
             Location? location = await _repository.GetLocation(id);
             if (location == null) return NotFound("Location has not been found");
-            return Ok(location);
+            BasicLocationModel locationResult = _mappingHelper.ConvertTo<BasicLocationModel,Location>(location);
+            return Ok(locationResult);
         }
         catch (Exception ex)
         {
