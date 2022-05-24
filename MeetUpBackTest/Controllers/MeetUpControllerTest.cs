@@ -6,6 +6,7 @@ using MeetUpBack.Data.Entities;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
 using MeetUpBack.Models.Dto;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -16,15 +17,24 @@ public class MeetUpControllerTest
 {
     private Mock<IMeetUpRepository> meetUpRepositoryStub;
     private Mock<ILocationRepository> locationRepositoryStub;
+    private Mock<IAuthRepository> userRepositoryStub;
     private Mock<IMappingHelper> mappingHelperStub;
+    private Mock<HttpContext> mockHttpContext;
+    private MockHttpSession mockSession;
     private MeetUpManagerController controller;
 
     public MeetUpControllerTest()
     {
         meetUpRepositoryStub = new Mock<IMeetUpRepository>();
         locationRepositoryStub = new Mock<ILocationRepository>();
+        userRepositoryStub = new Mock<IAuthRepository>();
         mappingHelperStub = new Mock<IMappingHelper>();
-        controller = new MeetUpManagerController(meetUpRepositoryStub.Object,locationRepositoryStub.Object,mappingHelperStub.Object);
+        mockHttpContext = new Mock<HttpContext>();
+        mockSession = new MockHttpSession();
+        controller = new MeetUpManagerController(meetUpRepositoryStub.Object, locationRepositoryStub.Object, userRepositoryStub.Object, mappingHelperStub.Object);
+        mockSession["username"] = "test@test.com";
+        mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+        controller.ControllerContext.HttpContext = mockHttpContext.Object;
     }
 
     [Fact]
@@ -47,7 +57,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(3),
             LocationId = 1
         };
-        
+
         var result = await controller.CreateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -95,7 +105,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now,
             LocationId = 1
         };
-        
+
         var result = await controller.CreateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -129,13 +139,65 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(3),
             LocationId = 1
         };
-        
+
         meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<string>())).ReturnsAsync((MeetUp?)null);
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync(new Location());
         mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
+            .Setup(conv => conv.ConvertTo<MeetUp, AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
+            .Returns(new MeetUp());
+
+        var result = await controller.CreateMeetUp(model);
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task CreateMeetUp_WithUnknowUser_ReturnsBadRequest()
+    {
+        AddMeetUpModel model = new AddMeetUpModel()
+        {
+            Name = "Event Test",
+            InitialDate = DateTime.Now.AddDays(2),
+            FinalDate = DateTime.Now.AddDays(3),
+            LocationId = 1
+        };      
+        mockSession["username"] = null!;
+        meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
+        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<string>()))
+                            .ReturnsAsync(new MeetUp());
+        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
+                            .ReturnsAsync(new Location());
+        userRepositoryStub.Setup(x => x.GetUser(It.IsAny<string>())).ReturnsAsync(new User());
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<MeetUp, AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
+            .Returns(new MeetUp());
+
+        var result = await controller.CreateMeetUp(model);
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task CreateMeetUp_WithUnexistUser_ReturnsBadRequest()
+    {
+        AddMeetUpModel model = new AddMeetUpModel()
+        {
+            Name = "Event Test",
+            InitialDate = DateTime.Now.AddDays(2),
+            FinalDate = DateTime.Now.AddDays(3),
+            LocationId = 1
+        };      
+        
+        meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
+        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<string>()))
+                            .ReturnsAsync(new MeetUp());
+        locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
+                            .ReturnsAsync(new Location());
+        userRepositoryStub.Setup(x => x.GetUser(It.IsAny<string>())).ReturnsAsync((User?)null);
+        mappingHelperStub
+            .Setup(conv => conv.ConvertTo<MeetUp, AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
             .Returns(new MeetUp());
 
         var result = await controller.CreateMeetUp(model);
@@ -152,16 +214,18 @@ public class MeetUpControllerTest
             InitialDate = DateTime.Now.AddDays(2),
             FinalDate = DateTime.Now.AddDays(3),
             LocationId = 1
-        };
+        };      
+        
         meetUpRepositoryStub.Setup(x => x.CreateMeetUp(It.IsAny<MeetUp>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<string>()))
                             .ReturnsAsync(new MeetUp());
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync(new Location());
+        userRepositoryStub.Setup(x => x.GetUser(It.IsAny<string>())).ReturnsAsync(new User());
         mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
+            .Setup(conv => conv.ConvertTo<MeetUp, AddMeetUpModel>(It.IsAny<AddMeetUpModel>()))
             .Returns(new MeetUp());
-        
+
         var result = await controller.CreateMeetUp(model);
 
         Assert.IsType<OkObjectResult>(result);
@@ -205,7 +269,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 1
         };
-        
+
         var result = await controller.UpdateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -222,7 +286,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 0
         };
-        
+
         var result = await controller.UpdateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -256,7 +320,7 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 1
         };
-        
+
         var result = await controller.UpdateMeetUp(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -314,14 +378,14 @@ public class MeetUpControllerTest
             FinalDate = DateTime.Now.AddDays(2),
             LocationId = 1
         };
-        
+
         meetUpRepositoryStub.Setup(x => x.UpdateMeetUp(It.IsAny<MeetUp>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync(new Location());
         mappingHelperStub
-            .Setup(conv => conv.ConvertTo<MeetUp,UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
+            .Setup(conv => conv.ConvertTo<MeetUp, UpdateMeetUpModel>(It.IsAny<UpdateMeetUpModel>()))
             .Returns(new MeetUp());
 
         var result = await controller.UpdateMeetUp(model);
@@ -391,10 +455,10 @@ public class MeetUpControllerTest
         int locationId = 1;
         meetUpRepositoryStub.Setup(x => x.GetMeetUpsByLocation(It.IsAny<int>()))
                             .ReturnsAsync(new List<MeetUp>());
-        
+
         locationRepositoryStub.Setup(x => x.GetLocation(It.IsAny<int>()))
                             .ReturnsAsync(new Location());
-        
+
         var result = await controller.GetMeetUpByLocation(locationId);
 
         Assert.IsType<OkObjectResult>(result);
@@ -434,7 +498,7 @@ public class MeetUpControllerTest
             StartHour = "22:35",
             MeetUpId = 1
         };
-        
+
         var result = await controller.AddEvent(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -497,14 +561,14 @@ public class MeetUpControllerTest
             StartHour = "22:35",
             MeetUpId = 1
         };
-        
+
         meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
                             .ReturnsAsync((Event?)null);
         mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
+            .Setup(conv => conv.ConvertTo<Event, AddEventModel>(It.IsAny<AddEventModel>()))
             .Returns(new Event());
 
         var result = await controller.AddEvent(model);
@@ -521,14 +585,14 @@ public class MeetUpControllerTest
             StartHour = "22:35",
             MeetUpId = 1
         };
-        
+
         meetUpRepositoryStub.Setup(x => x.CreateEvent(It.IsAny<Event>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<string>()))
                             .ReturnsAsync(new Event());
         mappingHelperStub
-            .Setup(conv => conv.ConvertTo<Event,AddEventModel>(It.IsAny<AddEventModel>()))
+            .Setup(conv => conv.ConvertTo<Event, AddEventModel>(It.IsAny<AddEventModel>()))
             .Returns(new Event());
 
         var result = await controller.AddEvent(model);
@@ -578,7 +642,7 @@ public class MeetUpControllerTest
             StartHour = "22:30",
             MeetUpId = 1
         };
-        
+
         var result = await controller.UpdateEvent(model);
 
         Assert.IsType<BadRequestObjectResult>(result);
@@ -665,7 +729,7 @@ public class MeetUpControllerTest
             StartHour = "22:30",
             MeetUpId = 1
         };
-        
+
         meetUpRepositoryStub.Setup(x => x.UpdateEvent(It.IsAny<Event>()));
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new MeetUp());
@@ -733,7 +797,7 @@ public class MeetUpControllerTest
 
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
                             .ReturnsAsync((Event?)null);
-        
+
         var result = await controller.GetEvent(id);
 
         Assert.IsType<NotFoundObjectResult>(result);
@@ -743,7 +807,7 @@ public class MeetUpControllerTest
     public async Task GetEvent_WithValidModel_ReturnsOk()
     {
         int id = 1;
-        
+
         meetUpRepositoryStub.Setup(x => x.GetEvent(It.IsAny<int>()))
                             .ReturnsAsync(new Event());
 
@@ -779,7 +843,7 @@ public class MeetUpControllerTest
     public async Task GetEventsByMeetUp_WithValidModel_ReturnsOk()
     {
         int id = 1;
-        
+
         meetUpRepositoryStub.Setup(x => x.GetEventsByMeetUp(It.IsAny<int>()))
                             .ReturnsAsync(new List<Event>());
         meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))

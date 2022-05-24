@@ -4,6 +4,7 @@ using MeetUpBack.Data.Entities;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
 using MeetUpBack.Models.Dto;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -15,6 +16,8 @@ public class UserControllerTest
     private Mock<IMappingHelper> _mappingHelperStub;
     private Mock<ITokenFactoryHelper> _tokenFactoryStub;
     private Mock<IPasswordManagerHelper> _passwordHelperStub;
+    private Mock<HttpContext> mockHttpContext;
+    private MockHttpSession mockSession;
     private UserController _controller;
 
     public UserControllerTest()
@@ -23,7 +26,11 @@ public class UserControllerTest
         _mappingHelperStub = new Mock<IMappingHelper>();
         _tokenFactoryStub = new Mock<ITokenFactoryHelper>();
         _passwordHelperStub = new Mock<IPasswordManagerHelper>();
+        mockHttpContext = new Mock<HttpContext>();
+        mockSession = new MockHttpSession();
         _controller = new UserController(_repositoryStub.Object, _mappingHelperStub.Object, _passwordHelperStub.Object,_tokenFactoryStub.Object);
+        mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+        _controller.ControllerContext.HttpContext = mockHttpContext.Object;
     }
 
     [Fact]
