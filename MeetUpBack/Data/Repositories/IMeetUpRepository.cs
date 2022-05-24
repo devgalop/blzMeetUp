@@ -18,4 +18,8 @@ public interface IMeetUpRepository
     Task<Event?> GetEvent(int id);
     Task<Event?> GetEvent(string name);
     Task<List<Event>> GetEventsByMeetUp(int meetUpId);
+    Task AssignMeetUpOwner(UserMeetUpOwner owner);
+    Task DeassignMeetUpOwner(UserMeetUpOwner owner);
+    Task RegisterAttendance(UserMeetUpAssistant user);
+    Task RemoveAttendance(UserMeetUpAssistant user);
 }

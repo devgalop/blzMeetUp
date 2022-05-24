@@ -112,4 +112,28 @@ public class MeetUpRepository : IMeetUpRepository
                 .ToListAsync();
     }
 
+    public async Task AssignMeetUpOwner(UserMeetUpOwner owner)
+    {
+        _dataContext.Owners.Add(owner);
+        await _dataContext.SaveChangesAsync();
+    }
+
+    public async Task DeassignMeetUpOwner(UserMeetUpOwner owner)
+    {
+        _dataContext.Owners.Remove(owner);
+        await _dataContext.SaveChangesAsync();
+    }
+
+    public async Task RegisterAttendance(UserMeetUpAssistant user)
+    {
+        _dataContext.Attendees.Add(user);
+        await _dataContext.SaveChangesAsync();
+    }
+
+    public async Task RemoveAttendance(UserMeetUpAssistant user)
+    {
+        _dataContext.Attendees.Remove(user);
+        await _dataContext.SaveChangesAsync();
+    }
+
 }

@@ -17,6 +17,8 @@ public class DataContext : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<Session> Sessions { get; set; } = null!;
+    public DbSet<UserMeetUpOwner> Owners { get; set; } = null!;
+    public DbSet<UserMeetUpAssistant> Attendees { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
