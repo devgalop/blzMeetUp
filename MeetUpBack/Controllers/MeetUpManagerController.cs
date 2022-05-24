@@ -15,14 +15,17 @@ public class MeetUpManagerController : ControllerBase
 {
     private readonly IMeetUpRepository _repository;
     private readonly ILocationRepository _locationRepo;
+    private readonly IAuthRepository _userRepository;
     private readonly IMappingHelper _mappingHelper;
 
     public MeetUpManagerController(IMeetUpRepository repository,
                                     ILocationRepository locationRepo,
+                                    IAuthRepository userRepository,
                                     IMappingHelper mappingHelper)
     {
         _repository = repository;
         _locationRepo = locationRepo;
+        _userRepository = userRepository;
         _mappingHelper = mappingHelper;
     }
 
@@ -31,16 +34,27 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(model == null || string.IsNullOrEmpty(model.Name) || model.LocationId <= 0) throw new ArgumentNullException("Model is invalid");
-            if(model.FinalDate < DateTime.Now || model.FinalDate < model.InitialDate) throw new Exception("Final date is not valid");
-            if(model.InitialDate < DateTime.Now) throw new Exception("Initial date is not valid");
+            if (model == null || string.IsNullOrEmpty(model.Name) || model.LocationId <= 0) throw new ArgumentNullException("Model is invalid");
+            if (model.FinalDate < DateTime.Now || model.FinalDate < model.InitialDate) throw new Exception("Final date is not valid");
+            if (model.InitialDate < DateTime.Now) throw new Exception("Initial date is not valid");
             Location? locationFound = await _locationRepo.GetLocation(model.LocationId);
-            if(locationFound == null)throw new Exception("Location does not exist");
-            MeetUp meetUp = _mappingHelper.ConvertTo<MeetUp,AddMeetUpModel>(model);
+            if (locationFound == null) throw new Exception("Location does not exist");
+            MeetUp meetUp = _mappingHelper.ConvertTo<MeetUp, AddMeetUpModel>(model);
             await _repository.CreateMeetUp(meetUp);
             var meetUpFound = await _repository.GetMeetUp(meetUp.Name);
-            if(meetUpFound == null)throw new Exception("Meet Up has not been added to repository");
-            BasicMeetUpModel meetUpResult = _mappingHelper.ConvertTo<BasicMeetUpModel,MeetUp>(meetUpFound);
+            if (meetUpFound == null) throw new Exception("Meet Up has not been added to repository");
+            string? userEmail = HttpContext.Session.GetString("username");
+            if(string.IsNullOrEmpty(userEmail)) throw new Exception("You must be logged");
+            User? userLogged = await _userRepository.GetUser(userEmail);
+            if(userLogged == null) throw new Exception("User has not been found");
+            UserMeetUpOwner owner = new UserMeetUpOwner()
+            {
+                UserId = userLogged.Id,
+                MeetUpId = meetUpFound.Id,
+                DateCreated = DateTime.Now
+            };
+            await _repository.AssignMeetUpOwner(owner);
+            BasicMeetUpModel meetUpResult = _mappingHelper.ConvertTo<BasicMeetUpModel, MeetUp>(meetUpFound);
             return Ok(meetUpResult);
         }
         catch (Exception ex)
@@ -55,21 +69,21 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(model == null || model.Id <= 0 || string.IsNullOrEmpty(model.Name) || model.LocationId <= 0) throw new ArgumentNullException("Model is invalid");
-            if(model.FinalDate < DateTime.Now || model.FinalDate < model.InitialDate) throw new Exception("Final date is not valid");
-            if(model.InitialDate < DateTime.Now) throw new Exception("Initial date is not valid");
+            if (model == null || model.Id <= 0 || string.IsNullOrEmpty(model.Name) || model.LocationId <= 0) throw new ArgumentNullException("Model is invalid");
+            if (model.FinalDate < DateTime.Now || model.FinalDate < model.InitialDate) throw new Exception("Final date is not valid");
+            if (model.InitialDate < DateTime.Now) throw new Exception("Initial date is not valid");
             Location? locationFound = await _locationRepo.GetLocation(model.LocationId);
-            if(locationFound == null)throw new Exception("Location does not exist");
+            if (locationFound == null) throw new Exception("Location does not exist");
             MeetUp? meetUpFound = await _repository.GetMeetUp(model.Id);
-            if(meetUpFound == null) return NotFound("Meet Up has not been found");
+            if (meetUpFound == null) return NotFound("Meet Up has not been found");
             meetUpFound.Name = model.Name;
             meetUpFound.InitialDate = model.InitialDate;
             meetUpFound.FinalDate = model.FinalDate;
             meetUpFound.LocationId = model.LocationId;
             await _repository.UpdateMeetUp(meetUpFound);
             meetUpFound = await _repository.GetMeetUp(model.Id);
-            if(meetUpFound == null) return NotFound("Meet Up has not been found");
-            BasicMeetUpModel meetUpResult = _mappingHelper.ConvertTo<BasicMeetUpModel,MeetUp>(meetUpFound);
+            if (meetUpFound == null) return NotFound("Meet Up has not been found");
+            BasicMeetUpModel meetUpResult = _mappingHelper.ConvertTo<BasicMeetUpModel, MeetUp>(meetUpFound);
             return Ok(meetUpResult);
         }
         catch (Exception ex)
@@ -84,9 +98,9 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
+            if (id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
             MeetUp? meetUpFound = await _repository.GetMeetUp(id);
-            if(meetUpFound == null) return NotFound("Meet up has not been found");
+            if (meetUpFound == null) return NotFound("Meet up has not been found");
             await _repository.DeleteMeetUp(meetUpFound);
             return Ok("Meet up has been deleted");
         }
@@ -103,7 +117,7 @@ public class MeetUpManagerController : ControllerBase
         try
         {
             List<MeetUp> meetUpList = await _repository.GetMeetUps();
-            List<BasicMeetUpModel> result = _mappingHelper.ConvertTo<List<BasicMeetUpModel>,List<MeetUp>>(meetUpList);
+            List<BasicMeetUpModel> result = _mappingHelper.ConvertTo<List<BasicMeetUpModel>, List<MeetUp>>(meetUpList);
             return Ok(result);
         }
         catch (Exception ex)
@@ -118,11 +132,11 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(locationId <= 0)throw new ArgumentOutOfRangeException("Location is not valid");
+            if (locationId <= 0) throw new ArgumentOutOfRangeException("Location is not valid");
             Location? locationFound = await _locationRepo.GetLocation(locationId);
-            if(locationFound == null)throw new Exception("Location does not exist");
+            if (locationFound == null) throw new Exception("Location does not exist");
             List<MeetUp> meetUpList = await _repository.GetMeetUpsByLocation(locationId);
-            List<BasicMeetUpModel> result = _mappingHelper.ConvertTo<List<BasicMeetUpModel>,List<MeetUp>>(meetUpList);
+            List<BasicMeetUpModel> result = _mappingHelper.ConvertTo<List<BasicMeetUpModel>, List<MeetUp>>(meetUpList);
             return Ok(result);
         }
         catch (Exception ex)
@@ -137,15 +151,15 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(model == null || string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.StartHour) || model.MeetUpId <= 0) throw new Exception("Model is invalid");
-            if(!Regex.Match(model.StartHour, @"^([01][0-9]|2[0-3]):([0-5][0-9])$").Success) throw new Exception("Invalid hour format. Valid format {HH:MM}");
+            if (model == null || string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.StartHour) || model.MeetUpId <= 0) throw new Exception("Model is invalid");
+            if (!Regex.Match(model.StartHour, @"^([01][0-9]|2[0-3]):([0-5][0-9])$").Success) throw new Exception("Invalid hour format. Valid format {HH:MM}");
             MeetUp? meetUpFound = await _repository.GetMeetUp(model.MeetUpId);
-            if(meetUpFound == null) throw new Exception("Meet up does not exist");
+            if (meetUpFound == null) throw new Exception("Meet up does not exist");
             Event meetUpEvent = _mappingHelper.ConvertTo<Event, AddEventModel>(model);
             await _repository.CreateEvent(meetUpEvent);
             Event? eventFound = await _repository.GetEvent(model.Name);
-            if(eventFound == null) throw new Exception("Event has not been added to the repository");
-            BasicEventModel eventResult = _mappingHelper.ConvertTo<BasicEventModel,Event>(eventFound);
+            if (eventFound == null) throw new Exception("Event has not been added to the repository");
+            BasicEventModel eventResult = _mappingHelper.ConvertTo<BasicEventModel, Event>(eventFound);
             return Ok(eventResult);
         }
         catch (Exception ex)
@@ -160,12 +174,12 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(model.Id <= 0 ||string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.StartHour) || model.MeetUpId <= 0) throw new Exception("Model is invalid");
-            if(!Regex.Match(model.StartHour, @"^([01][0-9]|2[0-3]):([0-5][0-9])$").Success) throw new Exception("Invalid hour format. Valid format {HH:MM}");
+            if (model.Id <= 0 || string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.StartHour) || model.MeetUpId <= 0) throw new Exception("Model is invalid");
+            if (!Regex.Match(model.StartHour, @"^([01][0-9]|2[0-3]):([0-5][0-9])$").Success) throw new Exception("Invalid hour format. Valid format {HH:MM}");
             Event? eventFound = await _repository.GetEvent(model.Id);
-            if(eventFound == null) return NotFound("Event has not been found");
+            if (eventFound == null) return NotFound("Event has not been found");
             MeetUp? meetUpFound = await _repository.GetMeetUp(model.MeetUpId);
-            if(meetUpFound == null) throw new Exception("Meet up does not exist");
+            if (meetUpFound == null) throw new Exception("Meet up does not exist");
             eventFound.Name = model.Name;
             eventFound.StartHour = model.StartHour;
             eventFound.Details = model.Details;
@@ -173,8 +187,8 @@ public class MeetUpManagerController : ControllerBase
             eventFound.MeetUpId = model.MeetUpId;
             await _repository.UpdateEvent(eventFound);
             eventFound = await _repository.GetEvent(model.Id);
-            if(eventFound == null) return NotFound("Event has not been found");
-            BasicEventModel eventResult = _mappingHelper.ConvertTo<BasicEventModel,Event>(eventFound);
+            if (eventFound == null) return NotFound("Event has not been found");
+            BasicEventModel eventResult = _mappingHelper.ConvertTo<BasicEventModel, Event>(eventFound);
             return Ok(eventResult);
         }
         catch (Exception ex)
@@ -189,9 +203,9 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(id <= 0)throw new ArgumentOutOfRangeException("id is out of range");
+            if (id <= 0) throw new ArgumentOutOfRangeException("id is out of range");
             Event? eventFound = await _repository.GetEvent(id);
-            if(eventFound == null) return NotFound("Event has not been found");
+            if (eventFound == null) return NotFound("Event has not been found");
             await _repository.DeleteEvent(eventFound);
             return Ok("Event has been deleted");
         }
@@ -207,11 +221,11 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(meetUpId <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
+            if (meetUpId <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
             MeetUp? meetUpFound = await _repository.GetMeetUp(meetUpId);
-            if(meetUpFound == null) return NotFound("Meet Up does not exist");
+            if (meetUpFound == null) return NotFound("Meet Up does not exist");
             List<Event> events = await _repository.GetEventsByMeetUp(meetUpId);
-            List<BasicEventModel> eventResult = _mappingHelper.ConvertTo<List<BasicEventModel>,List<Event>>(events);
+            List<BasicEventModel> eventResult = _mappingHelper.ConvertTo<List<BasicEventModel>, List<Event>>(events);
             return Ok(eventResult);
         }
         catch (Exception ex)
@@ -226,10 +240,10 @@ public class MeetUpManagerController : ControllerBase
     {
         try
         {
-            if(id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
+            if (id <= 0) throw new ArgumentOutOfRangeException("Id is out of range");
             Event? eventFound = await _repository.GetEvent(id);
-            if(eventFound == null) return NotFound("Event has not been found");
-            BasicEventModel eventResult = _mappingHelper.ConvertTo<BasicEventModel,Event>(eventFound);
+            if (eventFound == null) return NotFound("Event has not been found");
+            BasicEventModel eventResult = _mappingHelper.ConvertTo<BasicEventModel, Event>(eventFound);
             return Ok(eventResult);
         }
         catch (Exception ex)
