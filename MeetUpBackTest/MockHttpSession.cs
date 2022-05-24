@@ -65,7 +65,7 @@ public class MockHttpSession : ISession
     {
         if (sessionStorage[key] != null)
         {
-            value = Encoding.ASCII.GetBytes(sessionStorage[key].ToString());
+            value = Encoding.ASCII.GetBytes(sessionStorage[key].ToString()!);
             return true;
         }
         else
