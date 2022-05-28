@@ -1,4 +1,5 @@
 using System.Text;
+using MailTemplateEngine.Services;
 using MeetUpBack.Data;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
@@ -10,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddRazorPages();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -33,7 +35,9 @@ builder.Services.AddScoped<ILocationRepository, LocationRepository>()
                 .AddScoped<IMappingHelper, MappingHelper>()
                 .AddScoped<ITokenFactoryHelper,TokenFactoryHelper>()
                 .AddScoped<IPasswordManagerHelper,PasswordManagerHelper>()
-                .AddScoped<IMailHelper,MailHelper>();
+                .AddScoped<IMailHelper,MailHelper>()
+                .AddScoped<IRazorViewToStringRenderer,RazorViewToStringRenderer>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
