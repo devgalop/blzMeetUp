@@ -253,6 +253,7 @@ public class MeetUpManagerController : ControllerBase
         }
     }
 
+    [HttpPost("RegisterAttendance")]
     public async Task<IActionResult> RegisterAttendance(UserAttendanceModel model)
     {
         try
