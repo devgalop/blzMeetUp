@@ -252,4 +252,29 @@ public class MeetUpManagerController : ControllerBase
             return BadRequest(ex);
         }
     }
+
+    public async Task<IActionResult> RegisterAttendance(UserAttendanceModel model)
+    {
+        try
+        {
+            if(model.UserId <= 0 || model.MeetUpId <= 0) throw new ArgumentOutOfRangeException("Model invalid");
+            MeetUp? meetUpFound = await _repository.GetMeetUp(model.MeetUpId);
+            if(meetUpFound == null) return NotFound("Meet Up has not been found");
+            User? userFound = await _userRepository.GetUser(model.UserId);
+            if(userFound == null) return NotFound("User has not been found");
+            UserMeetUpAssistant userAssistant = new UserMeetUpAssistant()
+            {
+                UserId = userFound.Id,
+                MeetUpId = meetUpFound.Id,
+                ReservedAt = DateTime.Now
+            };
+            await _repository.RegisterAttendance(userAssistant);
+            return Ok("User has been added to event participants");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest(ex);
+        }
+    }
 }
