@@ -853,4 +853,102 @@ public class MeetUpControllerTest
 
         Assert.IsType<OkObjectResult>(result);
     }
+
+    [Fact]
+    public async Task RegisterAttendance_WithInvalidModel_ReturnsBadRequest()
+    {
+        UserAttendanceModel model = new UserAttendanceModel()
+        {
+            UserId = 0,
+            MeetUpId = 0
+        };
+
+        var result = await controller.RegisterAttendance(model);
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task RegisterAttendance_WithInvalidUserId_ReturnsBadRequest()
+    {
+        UserAttendanceModel model = new UserAttendanceModel()
+        {
+            UserId = 0,
+            MeetUpId = 1
+        };
+
+        var result = await controller.RegisterAttendance(model);
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task RegisterAttendance_WithInvalidMeetUpId_ReturnsBadRequest()
+    {
+        UserAttendanceModel model = new UserAttendanceModel()
+        {
+            UserId = 1,
+            MeetUpId = 0
+        };
+
+        var result = await controller.RegisterAttendance(model);
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task RegisterAttendance_WithUnexistMeetUp_ReturnsNotFound()
+    {
+        UserAttendanceModel model = new UserAttendanceModel()
+        {
+            UserId = 1,
+            MeetUpId = 1
+        };
+
+        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
+                            .ReturnsAsync((MeetUp?)null);
+
+        var result = await controller.RegisterAttendance(model);
+
+        Assert.IsType<NotFoundObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task RegisterAttendance_WithUnexistUser_ReturnsNotFound()
+    {
+        UserAttendanceModel model = new UserAttendanceModel()
+        {
+            UserId = 1,
+            MeetUpId = 1
+        };
+
+        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
+                            .ReturnsAsync(new MeetUp());
+        userRepositoryStub.Setup(x => x.GetUser(It.IsAny<int>()))
+                            .ReturnsAsync((User?)null);
+        
+        var result = await controller.RegisterAttendance(model);
+
+        Assert.IsType<NotFoundObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task RegisterAttendance_WithValidModel_ReturnsOk()
+    {
+        UserAttendanceModel model = new UserAttendanceModel()
+        {
+            UserId = 1,
+            MeetUpId = 1
+        };
+
+        meetUpRepositoryStub.Setup(x => x.GetMeetUp(It.IsAny<int>()))
+                            .ReturnsAsync(new MeetUp());
+        meetUpRepositoryStub.Setup(x => x.RegisterAttendance(It.IsAny<UserMeetUpAssistant>()));
+        userRepositoryStub.Setup(x => x.GetUser(It.IsAny<int>()))
+                            .ReturnsAsync(new User());
+        
+        var result = await controller.RegisterAttendance(model);
+
+        Assert.IsType<OkObjectResult>(result);
+    }
 }
