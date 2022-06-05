@@ -1,7 +1,6 @@
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using MeetUpBack.Models.Dto;
-using Microsoft.Extensions.Options;
+using MeetUpCommon.Models.Mail;
 using MimeKit;
 using MimeKit.Text;
 

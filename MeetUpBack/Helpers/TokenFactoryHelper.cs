@@ -2,8 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using MeetUpBack.Data.Entities;
-using MeetUpBack.Models.Dto;
-using Microsoft.Extensions.Options;
+using MeetUpCommon.Models.Auth;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MeetUpBack.Helpers;

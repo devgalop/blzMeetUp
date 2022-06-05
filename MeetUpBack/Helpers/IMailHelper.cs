@@ -1,4 +1,4 @@
-using MeetUpBack.Models.Dto;
+using MeetUpCommon.Models.Mail;
 
 namespace MeetUpBack.Helpers;
 

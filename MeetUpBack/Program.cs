@@ -3,7 +3,6 @@ using MailTemplateEngine.Services;
 using MeetUpBack.Data;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
-using MeetUpBack.Models.Dto;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

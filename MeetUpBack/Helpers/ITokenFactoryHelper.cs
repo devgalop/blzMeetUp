@@ -1,5 +1,5 @@
 using MeetUpBack.Data.Entities;
-using MeetUpBack.Models.Dto;
+using MeetUpCommon.Models.Auth;
 
 namespace MeetUpBack.Helpers;
 

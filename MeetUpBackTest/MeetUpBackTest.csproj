@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MeetUpBack\MeetUpBack.csproj" />
+    <ProjectReference Include="..\MeetUpCommon\MeetUpCommon.csproj" />
   </ItemGroup>
 
 </Project>

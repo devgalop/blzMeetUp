@@ -1,7 +1,7 @@
 using MeetUpBack.Data.Entities;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
-using MeetUpBack.Models.Dto;
+using MeetUpCommon.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

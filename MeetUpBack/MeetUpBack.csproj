@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MailTemplateEngine\MailTemplateEngine.csproj" />
+    <ProjectReference Include="..\MeetUpCommon\MeetUpCommon.csproj" />
   </ItemGroup>
 
 </Project>

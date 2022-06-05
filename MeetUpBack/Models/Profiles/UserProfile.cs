@@ -1,6 +1,6 @@
 using AutoMapper;
 using MeetUpBack.Data.Entities;
-using MeetUpBack.Models.Dto;
+using MeetUpCommon.Models.Auth;
 
 namespace MeetUpBack.Models.Profiles;
 

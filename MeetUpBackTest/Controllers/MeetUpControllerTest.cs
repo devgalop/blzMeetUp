@@ -5,7 +5,7 @@ using MeetUpBack.Controllers;
 using MeetUpBack.Data.Entities;
 using MeetUpBack.Data.Repositories;
 using MeetUpBack.Helpers;
-using MeetUpBack.Models.Dto;
+using MeetUpCommon.Models.MeetUp;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
