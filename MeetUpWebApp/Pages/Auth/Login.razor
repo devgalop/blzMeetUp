@@ -2,15 +2,18 @@
 
 <PageTitle>Login</PageTitle>
 
-<form action="">
+<EditForm Model="@_login" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
     <label for="email">Email :</label>
-    <input type="email" placeholder="youremail@example.com" ><br><br>
+    <input type="email" placeholder="youremail@example.com" @bind="_login.Email"><br><br>
     <label for="pass">Password :</label>
-    <input type="password" name="pass" id="pass"> <br><br>
-    <input type="submit" value="Login">
-</form>
+    <input type="password" name="pass" id="pass" @bind="_login.Password"> <br><br>
+    <button type="submit">Submit</button>
+</EditForm>
 
 @code
 {
-    
+    private LoginModel _login = new LoginModel();
+    private void HandleValidSubmit() { }
 }
