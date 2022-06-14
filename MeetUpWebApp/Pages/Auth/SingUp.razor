@@ -1,4 +1,5 @@
 @page "/signup"
+@inject IApiConsumerService _apiConsumer
 
 <PageTitle>SignUp</PageTitle>
 
@@ -23,5 +24,25 @@
 {
     private AddUserModel _user = new AddUserModel();
 
-    private void HandleValidSubmit() { }
+    protected override void OnInitialized()
+    {
+        _apiConsumer = new ApiConsumerService();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        _user.RoleId = 2;
+        RequestModel request = new RequestModel()
+        {
+            UrlBase = "http://localhost:5001",
+            ServicePrefix = "/api",
+            Controller = "/User/CreateUser",
+            Body = JsonConvert.SerializeObject(_user)
+        };
+        ResponseModel result = await _apiConsumer.PostAsync(request);
+        if (!result.IsSuccess)
+        {
+            Console.WriteLine(result.Message);
+        }
+    }
 }

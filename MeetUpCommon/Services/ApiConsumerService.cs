@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using MeetUpCommon.Models.Service;
@@ -8,7 +9,14 @@ public class ApiConsumerService : IApiConsumerService
 {
     private HttpClient ConfigureClient(RequestModel request)
     {
-        HttpClient client = new HttpClient
+        var handler = new HttpClientHandler();
+        handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+        handler.ServerCertificateCustomValidationCallback =
+            (httpRequestMessage, cert, cetChain, policyErrors) =>
+        {
+            return true;
+        };
+        HttpClient client = new HttpClient(handler)
         {
             BaseAddress = new Uri(request.UrlBase)
         };
@@ -17,6 +25,7 @@ public class ApiConsumerService : IApiConsumerService
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(request.TokenType, request.AccessToken);
         }
+
         return client;
     }
 
@@ -24,33 +33,38 @@ public class ApiConsumerService : IApiConsumerService
     {
         try
         {
-            HttpClient client = ConfigureClient(request);
-            StringContent content = new StringContent(request.Body, Encoding.UTF8, "application/json");
-            string url = $"{request.ServicePrefix}{request.Controller}";
-            HttpResponseMessage response = await client.PostAsync(url, content);
-            string result = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
+            using (HttpClient client = ConfigureClient(request))
             {
+                StringContent content = new StringContent(request.Body, Encoding.UTF8, "application/json");
+                string url = $"{request.ServicePrefix}{request.Controller}";
+                ServicePointManager.ServerCertificateValidationCallback +=
+                (sender, cert, chain, sslPolicyErrors) => true;
+                HttpResponseMessage response = await client.PostAsync(url, content);
+                string result = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new ResponseModel()
+                    {
+                        IsSuccess = false,
+                        Message = result
+                    };
+                }
+
                 return new ResponseModel()
                 {
-                    IsSuccess = false,
-                    Message = result
+                    IsSuccess = true,
+                    Result = result
                 };
             }
 
-            return new ResponseModel()
-            {
-                IsSuccess = true,
-                Result = result
-            };
         }
         catch (Exception ex)
         {
             return new ResponseModel()
             {
                 IsSuccess = false,
-                Message = ex.Message
+                Message = ex.ToString()
             };
         }
     }
@@ -85,7 +99,7 @@ public class ApiConsumerService : IApiConsumerService
             return new ResponseModel()
             {
                 IsSuccess = false,
-                Message = ex.Message
+                Message = ex.ToString()
             };
         }
     }
@@ -119,7 +133,7 @@ public class ApiConsumerService : IApiConsumerService
             return new ResponseModel()
             {
                 IsSuccess = false,
-                Message = ex.Message
+                Message = ex.ToString()
             };
         }
     }
@@ -153,7 +167,7 @@ public class ApiConsumerService : IApiConsumerService
             return new ResponseModel()
             {
                 IsSuccess = false,
-                Message = ex.Message
+                Message = ex.ToString()
             };
         }
     }
