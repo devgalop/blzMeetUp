@@ -29,7 +29,7 @@ public class MailHelper : IMailHelper
             var email = GenerateMessage(model);
             using var smtp = new SmtpClient();
             smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
-            smtp.Connect(_config.Host, _config.Port, SecureSocketOptions.SslOnConnect);
+            smtp.Connect(_config.Host, _config.Port, SecureSocketOptions.StartTls);
             smtp.Authenticate(_config.Username, _config.Password);
             smtp.Send(email);
             smtp.Disconnect(true);
@@ -54,7 +54,7 @@ public class MailHelper : IMailHelper
             var email = GenerateMessage(model);
             using var smtp = new SmtpClient();
             smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
-            await smtp.ConnectAsync(_config.Host, _config.Port, SecureSocketOptions.SslOnConnect);
+            await smtp.ConnectAsync(_config.Host, _config.Port, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(_config.Username, _config.Password);
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
