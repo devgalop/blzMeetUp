@@ -11,6 +11,9 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<IApiConsumerService,ApiConsumerService>();
 builder.Services.AddSingleton<WeatherForecastService>();
 
+builder.Configuration.AddEnvironmentVariables();
+DotNetEnv.Env.Load();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
