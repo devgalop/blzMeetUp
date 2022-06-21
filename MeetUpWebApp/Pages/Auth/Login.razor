@@ -1,19 +1,51 @@
 @page "/login"
+@inject IApiConsumerService _apiConsumer
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject NavigationManager NavManager
 
 <PageTitle>Login</PageTitle>
 
-<EditForm Model="@_login" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@_login" OnValidSubmit="@SignIn">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <label for="email">Email :</label>
     <input type="email" placeholder="youremail@example.com" @bind="_login.Email"><br><br>
     <label for="pass">Password :</label>
     <input type="password" name="pass" id="pass" @bind="_login.Password"> <br><br>
-    <button type="submit">Submit</button>
+    <button type="submit">Sign In</button>
 </EditForm>
 
 @code
 {
     private LoginModel _login = new LoginModel();
-    private void HandleValidSubmit() { }
+
+    protected override void OnInitialized()
+    {
+        _apiConsumer = new ApiConsumerService();
+    }
+
+    private async Task SignIn() 
+    {
+        RequestModel request = new RequestModel()
+        {
+            UrlBase = DotNetEnv.Env.GetString("API__URL__BASE"),
+            ServicePrefix = DotNetEnv.Env.GetString("API__PREFIX"),
+            Controller = "/User/Login",
+            Body = JsonConvert.SerializeObject(_login)
+        };
+        ResponseModel result = await _apiConsumer.PostAsync(request);
+        if (!result.IsSuccess)
+        {
+            Console.WriteLine(result.Message);
+        }
+        TokenModel tokenModel = JsonConvert.DeserializeObject<TokenModel>(result.Result)!;
+        UserSessionModel sessionModel = new UserSessionModel()
+        {
+            Email = _login.Email,
+            Token = tokenModel.Token,
+            ExpiresIn = tokenModel.ExpiresIn
+        };
+        await ProtectedSessionStore.SetAsync("session", sessionModel);
+        NavManager.NavigateTo("/");
+    }
 }

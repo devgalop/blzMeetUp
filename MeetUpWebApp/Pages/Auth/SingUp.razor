@@ -1,15 +1,16 @@
 @page "/signup"
 @inject IApiConsumerService _apiConsumer
+@inject NavigationManager NavManager
 
 <PageTitle>SignUp</PageTitle>
 
-<EditForm Model="@_user" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@_user" OnValidSubmit="@RegisterUser">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <label for="name">Name: </label>
-    <input type="text" placeholder="Alex" @bind="_user.Name" /><br><br>
+    <input type="text" placeholder="Your name" @bind="_user.Name" /><br><br>
     <label for="lastName">Last Name: </label>
-    <input type="text" placeholder="Garcia" @bind="_user.LastName" /><br><br>
+    <input type="text" placeholder="Your last name" @bind="_user.LastName" /><br><br>
     <label for="email">Email: </label>
     <input type="email" placeholder="emailaddress@example.com" @bind="_user.Email"><br><br>
     <label for="email">Confirm Email: </label>
@@ -18,8 +19,9 @@
     <input type="password" @bind="_user.Password"><br><br>
     <label for="pass">Confirm Password: </label>
     <input type="password" @bind="_user.ConfirmPassword"><br><br>
-    <button type="submit">Submit</button>
+    <button type="submit">Register</button>
 </EditForm>
+
 @code
 {
     private AddUserModel _user = new AddUserModel();
@@ -29,13 +31,13 @@
         _apiConsumer = new ApiConsumerService();
     }
 
-    private async Task HandleValidSubmit()
+    private async Task RegisterUser()
     {
         _user.RoleId = 2;
         RequestModel request = new RequestModel()
         {
-            UrlBase = "http://localhost:5001",
-            ServicePrefix = "/api",
+            UrlBase = DotNetEnv.Env.GetString("API__URL__BASE"),
+            ServicePrefix = DotNetEnv.Env.GetString("API__PREFIX"),
             Controller = "/User/CreateUser",
             Body = JsonConvert.SerializeObject(_user)
         };
@@ -44,5 +46,6 @@
         {
             Console.WriteLine(result.Message);
         }
+        NavManager.NavigateTo("/");
     }
 }
